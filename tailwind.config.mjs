@@ -19,12 +19,17 @@ export default {
 			},
 			animation: {
 				'spin-slow': 'spin 12s linear infinite',
+				'reverse-spin-slow': 'reverse-spin 15s linear infinite',
 				'float': 'float 6s ease-in-out infinite',
 			},
 			keyframes: {
 				float: {
 					'0%, 100%': { transform: 'translateY(0)' },
 					'50%': { transform: 'translateY(-20px)' },
+				},
+				'reverse-spin': {
+					from: { transform: 'rotate(360deg)' },
+					to: { transform: 'rotate(0deg)' },
 				}
 			}
 		},

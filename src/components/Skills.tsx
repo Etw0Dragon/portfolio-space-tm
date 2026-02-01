@@ -2,67 +2,55 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 const skills = [
-  {
-    category: "Langages & Frameworks",
-    items: ["HTML/CSS", "TypeScript", "Golang", "Astro, Meteor.js", "Next.js", "C"]
-  },
-  {
-    category: "Systèmes & Infra",
-    items: ["Linux (Debian/Arch)", "Docker, Podman", "Proxmox", "Bash Scripting", "Qemu/KVM, Vmware, VirtualBox"]
-  },
-  {
-    category: "Outils & DevOps",
-    items: ["Git", "GitHub Actions", "Traefik", "Nginx", "VS Code", "Portainer"]
-  }
+  { name: "C", icon: "/img/c.png", color: "#a8b9cc" },
+  { name: "Go", icon: "/img/go.png", color: "#00add8" },
+  { name: "K3S", icon: "/img/K3S.png", color: "#326ce5" },
+  { name: "Docker", icon: "/img/docker.png", color: "#2496ed" },
+  { name: "Linux", icon: "/img/linux.png", color: "#fcc624" },
+  { name: "Git", icon: "/img/git.png", color: "#f05032" },
+  { name: "Astro", icon: "/img/astro.png", color: "#ff5d01" },
+  { name: "TypeScript", icon: "/img/typescript.png", color: "#3178c6" },
 ];
 
 const Skills: React.FC = () => {
   return (
-    <section id="skills" className="py-20 relative overflow-hidden flex flex-col justify-center">
+    <section id="skills" className="py-20 bg-cosmic-900/50 relative overflow-hidden">
       <div className="container mx-auto px-4 z-10">
-        <motion.div
-           initial={{ opacity: 0, y: 50 }}
-           whileInView={{ opacity: 1, y: 0 }}
-           transition={{ duration: 0.8 }}
-           viewport={{ once: true }}
-           className="text-center mb-16"
-        >
-          <span className="text-cosmic-500 font-orbitron tracking-widest text-sm block mb-2">02. COMPÉTENCES</span>
-          <h2 className="text-4xl font-display font-bold text-white">Technolologies Maîtrisées</h2>
-        </motion.div>
+        <div className="text-center mb-16">
+          <motion.div
+             initial={{ opacity: 0, y: 50 }}
+             whileInView={{ opacity: 1, y: 0 }}
+             transition={{ duration: 0.8 }}
+             viewport={{ once: true }}
+          >
+            <span className="text-cosmic-500 font-orbitron tracking-widest text-sm block mb-2">04. COMPÉTENCES</span>
+            <h2 className="text-4xl font-display font-bold text-white mb-4">Stack Technique</h2>
+            <div className="w-20 h-1 bg-cosmic-500 mx-auto rounded-full"></div>
+          </motion.div>
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {skills.map((skillGroup, index) => (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+          {skills.map((skill, index) => (
             <motion.div
-              key={skillGroup.category}
+              key={skill.name}
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ delay: index * 0.2, duration: 0.5 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="bg-cosmic-800/50 backdrop-blur-sm border border-cosmic-700/30 p-6 rounded-2xl hover:border-cosmic-500/50 transition-colors duration-300"
+              whileHover={{ y: -5, borderColor: skill.color }}
+              className="bg-cosmic-800/30 backdrop-blur-sm border border-cosmic-700/50 p-6 rounded-2xl flex flex-col items-center justify-center gap-4 group transition-all duration-300"
             >
-              <h3 className="text-xl font-orbitron text-cosmic-100 mb-6 border-b border-cosmic-700 pb-2">
-                {skillGroup.category}
-              </h3>
-              <div className="flex flex-wrap gap-3">
-                {skillGroup.items.map((skill) => (
-                  <motion.span
-                    key={skill}
-                    whileHover={{ scale: 1.1, textShadow: "0 0 8px rgb(127,90,240)" }}
-                    className="px-4 py-2 bg-cosmic-900/80 rounded-full text-sm font-medium text-cosmic-100 border border-cosmic-700 hover:border-cosmic-500 transition-all cursor-default shadow-[0_0_10px_rgba(0,0,0,0.3)] hover:shadow-[0_0_15px_rgba(127,90,240,0.3)]"
-                  >
-                    {skill}
-                  </motion.span>
-                ))}
+              <div 
+                className="w-16 h-16 rounded-xl bg-cosmic-900/50 flex items-center justify-center p-3 group-hover:scale-110 transition-transform duration-300"
+                style={{ boxShadow: `0 0 20px ${skill.color}15` }}
+              >
+                <img src={skill.icon} alt={skill.name} className="w-full h-full object-contain" />
               </div>
+              <span className="text-sm font-orbitron text-gray-400 group-hover:text-white transition-colors">{skill.name}</span>
             </motion.div>
           ))}
         </div>
       </div>
-       
-      {/* Decorative Orbit Lines */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vw] h-[150vw] border border-cosmic-700/10 rounded-full -z-10 pointer-events-none animate-spin-slow duration-[100s]"></div>
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100vw] h-[100vw] border border-cosmic-700/10 rounded-full -z-10 pointer-events-none"></div>
     </section>
   );
 };

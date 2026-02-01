@@ -35,7 +35,7 @@ const Hero: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Decorative Planet */}
+      {/* Decorative Planet (Back to original but nicer) */}
       <motion.div
         className="absolute -right-20 md:right-20 top-1/4 w-64 h-64 md:w-96 md:h-96 rounded-full opacity-20 pointer-events-none"
         style={{

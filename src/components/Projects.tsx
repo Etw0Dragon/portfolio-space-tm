@@ -53,7 +53,7 @@ const Projects: React.FC = () => {
            viewport={{ once: true }}
            className="mb-16"
         >
-          <span className="text-cosmic-500 font-orbitron tracking-widest text-sm block mb-2">03. PROJETS</span>
+          <span className="text-cosmic-500 font-orbitron tracking-widest text-sm block mb-2">02. PROJETS</span>
           <h2 className="text-4xl md:text-5xl font-display font-bold text-white">Missions Accomplies</h2>
         </motion.div>
         
