@@ -71,22 +71,44 @@ const TerminalDisplay: React.FC = () => {
       const files = ['about.txt', 'competences.txt', 'projets.txt', 'contact.txt', 'blackhole'];
       
       const currentInput = input.trim().toLowerCase();
-      
+      let matches: string[] = [];
+      let prefix = '';
+
       if (currentInput.startsWith('./')) {
         const partial = currentInput.slice(2);
-        if ('blackhole'.startsWith(partial)) {
-          setInput('./blackhole');
-        }
+        matches = ['./blackhole'].filter(f => f.startsWith(`./${partial}`));
+        prefix = './';
       } else if (currentInput.startsWith('cat ')) {
         const partialFile = currentInput.slice(4);
-        const match = files.find(f => f.startsWith(partialFile));
-        if (match) {
-          setInput(`cat ${match}`);
-        }
+        matches = files.filter(f => f.startsWith(partialFile)).map(f => `cat ${f}`);
+        prefix = 'cat ';
       } else {
-        const match = commands.find(c => c.startsWith(currentInput));
-        if (match) {
-          setInput(match);
+        matches = commands.filter(c => c.startsWith(currentInput));
+      }
+
+      if (matches.length === 1) {
+        setInput(matches[0]);
+      } else if (matches.length > 1) {
+        // Find common prefix
+        let common = matches[0];
+        for (let i = 1; i < matches.length; i++) {
+          let j = 0;
+          while (j < common.length && j < matches[i].length && common[j] === matches[i][j]) {
+            j++;
+          }
+          common = common.slice(0, j);
+        }
+        
+        if (common.length > currentInput.length) {
+          setInput(common);
+        } else {
+          // List matches in history like a real shell
+          const suggestionLine = matches.map(m => {
+              if (m.startsWith('cat ')) return m.slice(4);
+              if (m.startsWith('./')) return m.slice(2);
+              return m;
+          }).join('    ');
+          setHistory(prev => [...prev, { command: input, output: suggestionLine }]);
         }
       }
     }
@@ -126,7 +148,7 @@ const TerminalDisplay: React.FC = () => {
     } else if (cmd === 'cat competences.txt') {
       response = ['Frontend: React, Astro, TailwindCSS', 'Backend: Node.js, Python', 'Infrastructure: Docker, Linux, Proxmox, Traefik'];
     } else if (cmd === 'cat projets.txt') {
-      response = ['- NAS Low-Cost', '- Vaultwarden Self-host', '- HomeLab Proxmox'];
+      response = ["- Portfolio CLI Style: Une version alternative de portfolio accessible entièrement en ligne de commande pour les puristes du terminal.", "- Cluster K3S: Déploiement d'un cluster Kubernetes léger pour expérimenter la gestion de conteneurs à l'échelle.", "- Homelab: Agencement de 3 serveurs en réseau pour héberger divers services et applications.", "- Lab Proxmox Cluster: Infrastructure de virtualisation haute disponibilité pour tester des déploiements Kubernetes et services micro-services."];
     } else if (cmd === 'cat contact.txt') {
       response = 'Email: contact@tom-moreau.dev | GitHub: github.com/tom-moreau';
     } else if (cmd === 'clear') {

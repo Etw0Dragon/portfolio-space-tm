@@ -99,24 +99,21 @@ const Timeline: React.FC = () => {
   
   return (
     <section ref={containerRef} id="timeline" className="h-[280vh] relative bg-transparent">
-      <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden">
-        <div className="max-w-4xl w-full px-4 relative z-20">
-          <motion.div
-             style={{ opacity: titleOpacity }}
-             className="text-center mb-16"
-          >
+      <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden">
+        <div className="max-w-4xl w-full px-4 relative z-20 pt-32 md:pt-40">
+          <div className="text-center mb-12 md:mb-16">
              <span className="text-cosmic-500 font-orbitron tracking-widest text-sm block mb-2">04. PARCOURS</span>
              <h2 className="text-4xl font-display font-bold text-white">Trajectoire Spatiale</h2>
-          </motion.div>
+          </div>
 
           <div className="relative">
-            {/* Vertical Line */}
+            {/* Vertical Line ...existing code... */}
             <motion.div 
               style={{ opacity: lineOpacity }}
               className="absolute left-0 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-cosmic-500 via-cosmic-900 to-transparent md:-translate-x-1/2"
             ></motion.div>
             
-            <div className="space-y-8 md:space-y-12">
+            <div className="space-y-6 md:space-y-8">
               {timelineData.map((item, index) => (
                 <TimelineItem 
                   key={index} 
@@ -151,10 +148,26 @@ const Timeline: React.FC = () => {
                           style={{ x, y }}
                           className="absolute flex flex-col items-center group"
                       >
+                          {/* Planetary Rings */}
+                          <div className="absolute w-20 h-20 md:w-32 md:h-32 pointer-events-none">
+                              <motion.div 
+                                  animate={{ rotate: 360 }}
+                                  transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                                  className="absolute inset-0 rounded-full border border-cosmic-500/20 shadow-[0_0_15px_rgba(127,90,240,0.1)]"
+                                  style={{ rotateX: "75deg", rotateY: "10deg" }}
+                              />
+                              <motion.div 
+                                  animate={{ rotate: -360 }}
+                                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                                  className="absolute inset-0 rounded-full border border-cosmic-400/10"
+                                  style={{ rotateX: "80deg", rotateY: "-15deg", scale: 1.2 }}
+                              />
+                          </div>
+
                           <motion.div 
                             animate={{ rotate: [0, 360] }}
                             transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                            className="w-12 h-12 md:w-20 md:h-20 rounded-full bg-cosmic-800/90 border border-cosmic-500/50 backdrop-blur-md flex items-center justify-center p-3 md:p-4 shadow-[0_0_20px_rgba(127,90,240,0.3)] group-hover:shadow-[0_0_30px_rgba(127,90,240,0.6)] group-hover:border-cosmic-500 transition-all duration-300"
+                            className="w-12 h-12 md:w-20 md:h-20 rounded-full bg-cosmic-800/90 border border-cosmic-500/50 backdrop-blur-md flex items-center justify-center p-3 md:p-4 shadow-[0_0_20px_rgba(127,90,240,0.3)] group-hover:shadow-[0_0_30px_rgba(127,90,240,0.6)] group-hover:border-cosmic-500 transition-all duration-300 z-10"
                           >
                               <img src={planet.logo} alt={planet.name} className="w-full h-full object-contain" />
                           </motion.div>

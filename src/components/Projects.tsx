@@ -38,8 +38,13 @@ const projects = [
 ];
 
 const Projects: React.FC = () => {
+  const handleProtectedLink = (e: React.MouseEvent) => {
+    e.preventDefault();
+    alert("closed source for now please wait for public release");
+  };
+
   return (
-    <section id="projects" className="py-24 pb-12 relative px-4">
+    <section id="projects" className="py-24 pb-32 relative px-4">
       <div className="max-w-7xl mx-auto">
         <motion.div
            initial={{ opacity: 0, y: 30 }}
@@ -71,10 +76,19 @@ const Projects: React.FC = () => {
                     {project.icon}
                   </div>
                   <div className="flex gap-4">
-                    <a href={project.github} className="text-gray-400 hover:text-white transition-colors">
+                    <a 
+                      href="https://github.com/Etw0Dragon/" 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="text-gray-400 hover:text-white transition-colors"
+                    >
                       <Github size={20} />
                     </a>
-                    <a href={project.link} className="text-gray-400 hover:text-white transition-colors">
+                    <a 
+                      href="#" 
+                      onClick={handleProtectedLink}
+                      className="text-gray-400 hover:text-white transition-colors"
+                    >
                       <ExternalLink size={20} />
                     </a>
                   </div>
