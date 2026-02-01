@@ -1,0 +1,36 @@
+---
+import Layout from '../layouts/Layout.astro';
+import StarField from '../components/StarField';
+import SuccessPopup from '../components/SuccessPopup';
+---
+
+<Layout title="Easter Egg Découvert ! | Tom Moreau" showNavbar={false}>
+	<main class="relative min-h-screen flex items-center justify-center overflow-hidden bg-cosmic-900">
+		<!-- Slow Illumination Effect -->
+		<div class="absolute inset-0 bg-black z-40 animate-slow-illuminate pointer-events-none"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-cosmic-500/20 rounded-full blur-[150px] animate-pulse-slow"></div>
+        
+        <StarField client:only="react" />
+
+		<div class="z-50 text-center px-4">
+			<SuccessPopup client:load />
+		</div>
+	</main>
+</Layout>
+
+<style>
+    @keyframes slow-illuminate {
+        0% { opacity: 1; }
+        100% { opacity: 0; }
+    }
+    .animate-slow-illuminate {
+        animation: slow-illuminate 4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+    @keyframes pulse-slow {
+        0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
+        50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.1); }
+    }
+    .animate-pulse-slow {
+        animation: pulse-slow 8s ease-in-out infinite;
+    }
+</style>

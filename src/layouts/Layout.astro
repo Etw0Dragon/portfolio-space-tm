@@ -1,0 +1,53 @@
+---
+import '@fontsource/inter';
+import '@fontsource/space-grotesk';
+import '@fontsource/orbitron';
+import Navbar from '../components/Navbar';
+
+interface Props {
+	title: string;
+	showNavbar?: boolean;
+}
+
+const { title, showNavbar = true } = Astro.props;
+---
+
+<!doctype html>
+<html lang="fr" class="scroll-smooth">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Portfolio de Tom Moreau - Développeur & passionné d'infrastructure" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+	</head>
+	<body class="bg-cosmic-900 text-cosmic-100 overflow-x-hidden selection:bg-cosmic-500 selection:text-white">
+		{showNavbar && <Navbar client:load />}
+		<slot />
+	</body>
+</html>
+
+<style is:global>
+	/* Custom scrollbar */
+	::-webkit-scrollbar {
+		width: 10px;
+	}
+	::-webkit-scrollbar-track {
+		background: #0b0d17;
+	}
+	::-webkit-scrollbar-thumb {
+		background: #7f5af0;
+		border-radius: 5px;
+	}
+	::-webkit-scrollbar-thumb:hover {
+		background: #6246ea;
+	}
+
+	html, body {
+		margin: 0;
+		padding: 0;
+		width: 100%;
+		height: 100%;
+	}
+</style>

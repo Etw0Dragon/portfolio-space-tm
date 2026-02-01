@@ -1,0 +1,205 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { BLACKHOLE_ANIMATION } from '../utils/blackholeFrames';
+
+interface CommandOutput {
+  command: string;
+  output: string | string[];
+}
+
+const TerminalDisplay: React.FC = () => {
+  const [input, setInput] = useState('');
+  const [history, setHistory] = useState<CommandOutput[]>([
+    { command: '', output: 'Bienvenue sur le terminal de Tom Moreau. Tapez "help" pour voir les commandes disponibles.' }
+  ]);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [history]);
+
+  const runBlackholeAnimation = async () => {
+    setIsAnimating(true);
+    window.dispatchEvent(new Event('blackhole-start'));
+    
+    // Add an initial entry for the animation
+    setHistory(prev => [...prev, { command: './blackhole', output: BLACKHOLE_ANIMATION[0] }]);
+
+    for (let frameIndex = 1; frameIndex < BLACKHOLE_ANIMATION.length; frameIndex++) {
+      // Trigger global background explosion at the right moment (Phase 3 start ~ frame 45)
+      if (frameIndex === 45) {
+          window.dispatchEvent(new Event('blackhole-explode'));
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 40));
+      setHistory(prev => {
+        const newHistory = [...prev];
+        newHistory[newHistory.length - 1] = { 
+          command: './blackhole', 
+          output: BLACKHOLE_ANIMATION[frameIndex] 
+        };
+        return newHistory;
+      });
+    }
+
+    // After animation, Wait to show particles
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // Initiate fade out before redirect
+    setIsRedirecting(true);
+    
+    // Tiny delay to let the fade start
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // Final Redirect
+    window.location.href = '/easter-egg';
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (isAnimating) {
+        e.preventDefault();
+        return;
+    }
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const commands = ['help', 'ls', 'whoami', 'clear', 'cat', './blackhole'];
+      const files = ['about.txt', 'competences.txt', 'projets.txt', 'contact.txt', 'blackhole'];
+      
+      const currentInput = input.trim().toLowerCase();
+      
+      if (currentInput.startsWith('./')) {
+        const partial = currentInput.slice(2);
+        if ('blackhole'.startsWith(partial)) {
+          setInput('./blackhole');
+        }
+      } else if (currentInput.startsWith('cat ')) {
+        const partialFile = currentInput.slice(4);
+        const match = files.find(f => f.startsWith(partialFile));
+        if (match) {
+          setInput(`cat ${match}`);
+        }
+      } else {
+        const match = commands.find(c => c.startsWith(currentInput));
+        if (match) {
+          setInput(match);
+        }
+      }
+    }
+  };
+
+  const handleCommand = (e: React.FormEvent) => {
+    e.preventDefault();
+    const cmd = input.trim().toLowerCase();
+    let response: string | string[] = '';
+
+    if (cmd === 'help') {
+      response = [
+        '',
+        '--- COMMANDES DISPONIBLES ---',
+        '',
+        '  ls              Lister les fichiers du répertoire',
+        '  cat [fichier]   Afficher le contenu d\'un fichier',
+        '  whoami          Afficher les informations du profil',
+        '  clear           Nettoyer l\'écran du terminal',
+        '  help            Afficher ce menu d\'assistance',
+        '',
+        '  ./blackhole     [DANGER] Lancer le programme expérimental',
+        '',
+        '----------------------------',
+        ''
+      ];
+    } else if (cmd === 'ls') {
+      response = ['about.txt', 'competences.txt', 'projets.txt', 'contact.txt', 'blackhole*'];
+    } else if (cmd === './blackhole') {
+      runBlackholeAnimation();
+      setInput('');
+      return;
+    } else if (cmd === 'whoami') {
+      response = 'Tom Moreau - Développeur passionné d\'infra et de code.';
+    } else if (cmd === 'cat about.txt') {
+      response = 'Je suis un développeur passionné par l\'administration système, le self-hosting et le développement d\'applications modernes.';
+    } else if (cmd === 'cat competences.txt') {
+      response = ['Frontend: React, Astro, TailwindCSS', 'Backend: Node.js, Python', 'Infrastructure: Docker, Linux, Proxmox, Traefik'];
+    } else if (cmd === 'cat projets.txt') {
+      response = ['- NAS Low-Cost', '- Vaultwarden Self-host', '- HomeLab Proxmox'];
+    } else if (cmd === 'cat contact.txt') {
+      response = 'Email: contact@tom-moreau.dev | GitHub: github.com/tom-moreau';
+    } else if (cmd === 'clear') {
+      setHistory([]);
+      setInput('');
+      return;
+    } else if (cmd === '') {
+      response = '';
+    } else {
+      response = `Command not found: ${cmd}. Tapez "help" pour l'aide.`;
+    }
+
+    setHistory([...history, { command: input, output: response }]);
+    setInput('');
+  };
+
+  return (
+    <div 
+      className={`w-full max-w-5xl mx-auto h-[750px] bg-transparent border border-cosmic-700/50 rounded-lg p-4 font-mono text-green-400 shadow-2xl flex flex-col overflow-hidden relative transition-opacity duration-500 ${isRedirecting ? 'opacity-0' : 'opacity-100'}`}
+      onClick={() => inputRef.current?.focus()}
+    >
+      {/* Background for Terminal when not animating */}
+      <div className={`absolute inset-0 bg-black/90 -z-10 transition-opacity duration-1000 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}></div>
+
+      {/* Fixed Overlay for Blackhole Animation - Covers entire screen */}
+      {isAnimating && (
+        <div className={`fixed inset-0 z-[100] bg-transparent flex flex-col items-center justify-center p-0 transition-opacity duration-700 ${isRedirecting ? 'opacity-0' : 'opacity-100'}`}>
+             {/* Dark backdrop blur to see StarField behind stars */}
+             <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] -z-10"></div>
+             
+             <div className="text-gray-200 font-mono whitespace-pre leading-none text-[7px] sm:text-[9px] md:text-[13px] lg:text-[15px] xl:text-[18px] text-center w-full h-full flex flex-col justify-center overflow-hidden">
+                {Array.isArray(history[history.length - 1].output) ? (
+                    (history[history.length - 1].output as string[]).map((line, j) => <div key={j} className="w-full">{line}</div>)
+                ) : null}
+             </div>
+        </div>
+      )}
+
+      <div className={`flex-1 overflow-y-auto mb-4 space-y-2 scrollbar-thin scrollbar-thumb-cosmic-700 ${isAnimating ? 'opacity-0' : ''}`} ref={scrollRef}>
+        {history.map((item, i) => (
+          <div key={i} className="animate-in fade-in duration-300">
+            {item.command && (
+              <div className="flex gap-2">
+                <span className="text-cosmic-500 font-bold">tom@space:~$</span>
+                <span>{item.command}</span>
+              </div>
+            )}
+            <div className={`text-gray-300 ml-4 font-mono whitespace-pre-wrap ${item.command === './blackhole' ? 'text-center' : ''}`}>
+              {Array.isArray(item.output) ? (
+                item.output.map((line, j) => <div key={j} className={line === '' ? 'h-2' : ''}>{line}</div>)
+              ) : (
+                <div>{item.output}</div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+      
+      <form onSubmit={handleCommand} className="flex gap-2 items-center">
+        <span className="text-cosmic-500 font-bold shrink-0">tom@space:~$</span>
+        <input
+          ref={inputRef}
+          type="text"
+          value={input}
+          disabled={isAnimating}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          className={`bg-transparent border-none outline-none flex-1 text-white caret-cosmic-500 w-full ${isAnimating ? 'opacity-50 cursor-not-allowed' : ''}`}
+          autoFocus
+        />
+      </form>
+    </div>
+  );
+};
+
+export default TerminalDisplay;

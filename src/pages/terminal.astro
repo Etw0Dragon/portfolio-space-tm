@@ -1,0 +1,28 @@
+---
+import Layout from '../layouts/Layout.astro';
+import StarField from '../components/StarField';
+import TerminalDisplay from '../components/TerminalDisplay';
+import { motion } from 'framer-motion';
+---
+
+<Layout title="Terminal CLI | Tom Moreau">
+	<main class="relative min-h-screen flex items-center justify-center pt-24 pb-12 px-4">
+		<!-- Background -->
+		<StarField client:only="react" />
+
+		<div class="z-10 w-full max-w-5xl">
+			<div class="text-center mb-10">
+				<h1 class="text-4xl font-display font-bold text-white mb-2">Terminal Cosmique</h1>
+				<p class="text-gray-400 font-orbitron text-sm tracking-widest uppercase">Exploration en ligne de commande</p>
+			</div>
+
+			<TerminalDisplay client:load />
+            
+            <div class="mt-8 text-center">
+                <a href="/" class="text-cosmic-500 hover:text-white transition-colors text-sm font-orbitron">
+                    &larr; Retour à l'interface graphique
+                </a>
+            </div>
+		</div>
+	</main>
+</Layout>
