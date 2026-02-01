@@ -146,11 +146,11 @@ const TerminalDisplay: React.FC = () => {
     } else if (cmd === 'cat about.txt') {
       response = 'Je suis un développeur passionné par l\'administration système, le self-hosting et le développement d\'applications modernes.';
     } else if (cmd === 'cat competences.txt') {
-      response = ['Frontend: React, Astro, TailwindCSS', 'Backend: Node.js, Python', 'Infrastructure: Docker, Linux, Proxmox, Traefik'];
+      response = ['Frontend: React, Astro, TailwindCSS, Next.js', 'Backend: Node.js, Golang, C', 'Infrastructure: Docker, Linux, Proxmox, Traefik, Nginx, K3s, Kubernetes'];
     } else if (cmd === 'cat projets.txt') {
       response = ["- Portfolio CLI Style: Une version alternative de portfolio accessible entièrement en ligne de commande pour les puristes du terminal.", "- Cluster K3S: Déploiement d'un cluster Kubernetes léger pour expérimenter la gestion de conteneurs à l'échelle.", "- Homelab: Agencement de 3 serveurs en réseau pour héberger divers services et applications.", "- Lab Proxmox Cluster: Infrastructure de virtualisation haute disponibilité pour tester des déploiements Kubernetes et services micro-services."];
     } else if (cmd === 'cat contact.txt') {
-      response = 'Email: contact@tom-moreau.dev | GitHub: github.com/tom-moreau';
+      response = 'Email: tom.alcyone@tmfolio.site | GitHub: github.com/Etw0Dragon | LinkedIn: linkedin.com/in/tom-moreau-392690332';
     } else if (cmd === 'clear') {
       setHistory([]);
       setInput('');
