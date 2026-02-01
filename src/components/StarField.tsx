@@ -48,7 +48,7 @@ const StarField: React.FC = () => {
         // Start fading the background slightly after explosion
         setTimeout(() => {
             isFadingOut = true;
-        }, 1500);
+        }, 800);
     };
 
     window.addEventListener('resize', resize);

@@ -3,6 +3,7 @@ import '@fontsource/inter';
 import '@fontsource/space-grotesk';
 import '@fontsource/orbitron';
 import Navbar from '../components/Navbar';
+import { ViewTransitions } from 'astro:transitions';
 
 interface Props {
 	title: string;
@@ -21,6 +22,7 @@ const { title, showNavbar = true } = Astro.props;
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+		<ViewTransitions />
 	</head>
 	<body class="bg-cosmic-900 text-cosmic-100 overflow-x-hidden selection:bg-cosmic-500 selection:text-white">
 		{showNavbar && <Navbar client:load />}

@@ -47,14 +47,25 @@ const TerminalDisplay: React.FC = () => {
       });
     }
 
-    // After animation, Wait to show particles
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    // After animation, show a transition message to avoid "freeze" feel
+    setHistory(prev => [...prev, { 
+      command: '', 
+      output: [
+        'COLLAPSE SUCCESSFUL',
+        '',
+        '[ OK ] Quantum State Stabilized',
+        '[ OK ] Reality Anchor Released',
+        '[ INFO ] Redirecting to Secret Sector...'
+      ] 
+    }]);
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
     
     // Initiate fade out before redirect
     setIsRedirecting(true);
     
     // Tiny delay to let the fade start
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 700));
     
     // Final Redirect
     window.location.href = '/easter-egg';
@@ -179,7 +190,11 @@ const TerminalDisplay: React.FC = () => {
              {/* Dark backdrop blur to see StarField behind stars */}
              <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] -z-10"></div>
              
-             <div className="text-gray-200 font-mono whitespace-pre leading-none text-[7px] sm:text-[9px] md:text-[13px] lg:text-[15px] xl:text-[18px] text-center w-full h-full flex flex-col justify-center overflow-hidden">
+             <div className={`text-gray-200 font-mono whitespace-pre text-center w-full h-full flex flex-col justify-center overflow-hidden ${
+                Array.isArray(history[history.length - 1].output) && (history[history.length - 1].output as string[]).length < 10
+                  ? 'text-base sm:text-xl md:text-2xl leading-relaxed'
+                  : 'leading-none text-[7px] sm:text-[9px] md:text-[13px] lg:text-[15px] xl:text-[18px]'
+             }`}>
                 {Array.isArray(history[history.length - 1].output) ? (
                     (history[history.length - 1].output as string[]).map((line, j) => <div key={j} className="w-full">{line}</div>)
                 ) : null}
