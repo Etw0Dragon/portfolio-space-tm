@@ -12,14 +12,13 @@ import Contact from '../components/Contact';
 <Layout title="Tom Moreau | Portfolio Cosmique">
 	<main class="relative w-full">
 		<!-- Background (Fixed) -->
-		<StarField client:only="react" />
+		<StarField client:only="react" transition:persist />
 
 		<!-- Sections -->
 		<Hero client:load />
 		<About client:visible />
 		<Projects client:visible />
-		<Timeline client:load />
-		<Skills client:load />
+		<Timeline client:visible />
 		<Contact client:visible />
 	</main>
 </Layout>

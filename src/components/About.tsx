@@ -31,7 +31,7 @@ const About: React.FC = () => {
           {/* Card */}
           <motion.div 
             variants={itemVariants}
-            className="bg-cosmic-800/80 p-8 rounded-2xl border border-cosmic-700 backdrop-blur-md shadow-2xl relative group"
+            className="bg-cosmic-800/80 p-8 rounded-2xl border border-cosmic-700 backdrop-blur-sm shadow-2xl relative group"
           >
              <div className="absolute -inset-0.5 bg-gradient-to-r from-cosmic-500 to-blue-500 rounded-2xl opacity-20 group-hover:opacity-40 transition duration-500 blur"></div>
              <div className="relative z-10">
@@ -39,10 +39,9 @@ const About: React.FC = () => {
                   <span className="text-cosmic-500">01.</span> Qui suis-je ?
                 </h2>
                 <p className="text-gray-300 leading-relaxed mb-6">
-                  Salut ! Je suis Tom, j'ai 17 ans et je suis passionné par ce qui se passe derrière la machine. 
-                  Mon terrain de jeu se situe entre le développement d'applications modernes et 
-                  l'administration système. J'aime construire des outils robustes, optimisés et 
-                  sécurisés.
+                  Salut ! Moi c'est Tom, j'ai 17 ans. Je pourrais vous dire comme tout le monde que 
+                  je suis passionné d'informatique et ce serait vrai, mais ce n'est pas exactement ça... 
+                  J'aime comprendre.
                 </p>
                 <div className="space-y-4">
                   <div className="flex items-center gap-3 text-gray-400">
@@ -74,8 +73,8 @@ const About: React.FC = () => {
                  <div className="text-sm text-gray-400">Années d'exp. personnelle</div>
                </div>
                <div className="p-4 bg-cosmic-800 rounded-lg border border-cosmic-700/50">
-                 <div className="text-3xl font-bold text-white mb-1">+∞</div>
-                 <div className="text-sm text-gray-400">Motivation</div>
+                 <div className="text-3xl font-bold text-white mb-1">Un peu trop</div>
+                 <div className="text-sm text-gray-400">De motivation</div>
                </div>
              </div>
           </motion.div>

@@ -15,7 +15,9 @@ const Contact: React.FC = () => {
         viewport={{ once: true }}
         className="text-center z-10 max-w-2xl mx-auto"
       >
-        <span className="text-cosmic-500 font-orbitron tracking-widest text-sm block mb-4">05. TRANSMISSION</span>
+                  <span className="text-cosmic-500 font-orbitron tracking-widest text-sm block mb-4">
+            04. TRANSMISSION
+          </span>
         <h2 className="text-5xl md:text-6xl font-display font-bold text-white mb-8">
           Entrer en <br />
           <span className="bg-gradient-to-r from-cosmic-500 to-blue-500 bg-clip-text text-transparent">Communication</span>

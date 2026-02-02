@@ -79,7 +79,7 @@ const TerminalDisplay: React.FC = () => {
     if (e.key === 'Tab') {
       e.preventDefault();
       const commands = ['help', 'ls', 'whoami', 'clear', 'cat', './blackhole'];
-      const files = ['about.txt', 'competences.txt', 'projets.txt', 'contact.txt', 'blackhole'];
+      const files = ['about.txt', 'parcours.txt', 'projets.txt', 'contact.txt', 'blackhole'];
       
       const currentInput = input.trim().toLowerCase();
       let matches: string[] = [];
@@ -147,19 +147,32 @@ const TerminalDisplay: React.FC = () => {
         ''
       ];
     } else if (cmd === 'ls') {
-      response = ['about.txt', 'competences.txt', 'projets.txt', 'contact.txt', 'blackhole*'];
+      response = ['about.txt', 'parcours.txt', 'projets.txt', 'contact.txt', 'blackhole*'];
     } else if (cmd === './blackhole') {
       runBlackholeAnimation();
       setInput('');
       return;
     } else if (cmd === 'whoami') {
-      response = 'Tom Moreau - Développeur passionné d\'infra et de code.';
+      response = 'Tom Moreau - Apprenti Ingénieur DevOps & Administrateur Systèmes.';
     } else if (cmd === 'cat about.txt') {
-      response = 'Je suis un développeur passionné par l\'administration système, le self-hosting et le développement d\'applications modernes.';
-    } else if (cmd === 'cat competences.txt') {
-      response = ['Frontend: React, Astro, TailwindCSS, Next.js', 'Backend: Node.js, Golang, C', 'Infrastructure: Docker, Linux, Proxmox, Traefik, Nginx, K3s, Kubernetes'];
+      response = 'Je suis Tom, 17 ans, passionné par ce qui se passe derrière la machine. Mon expertise se situe au croisement du développement et de l\'infrastructure.';
+    } else if (cmd === 'cat parcours.txt') {
+      response = [
+        '2022 - 2023: 2nd pro CIEL - Découverte des bases de l\'informatique.',
+        '2023 - 2024: Première STI2D - Projets techniques et informatique industrielle.',
+        '2024 - 2025: Terminale STI2D - Électronique et systèmes d\'informations numériques.',
+        '',
+        'Prochaine étape: BUT en alternance - Objectif DevOps / Cloud Engineer.'
+      ];
     } else if (cmd === 'cat projets.txt') {
-      response = ["- Portfolio CLI Style: Une version alternative de portfolio accessible entièrement en ligne de commande pour les puristes du terminal.", "- Cluster K3S: Déploiement d'un cluster Kubernetes léger pour expérimenter la gestion de conteneurs à l'échelle.", "- Homelab: Agencement de 3 serveurs en réseau pour héberger divers services et applications.", "- Lab Proxmox Cluster: Infrastructure de virtualisation haute disponibilité pour tester des déploiements Kubernetes et services micro-services."];
+      response = [
+        '- AlcyoneOS: OS basé sur Linux optimisé pour la performance et la sécurité des infrastructures.',
+        '- Infrastructure HomeLab: Cluster Proxmox haute disponibilité.',
+        '  * Stockage: ZFS avec configuration RAID pour la résilience.',
+        '  * Réseau: Segmentation via VLANs pour une isolation stricte.',
+        '  * Sécurité: Monitoring et sauvegardes automatisées.',
+        '- Portfolio CLI Style: Interface interactive Node.js pour explorer mon parcours.'
+      ];
     } else if (cmd === 'cat contact.txt') {
       response = 'Email: tom.alcyone@tmfolio.site | GitHub: github.com/Etw0Dragon | LinkedIn: linkedin.com/in/tom-moreau-392690332';
     } else if (cmd === 'clear') {

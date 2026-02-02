@@ -6,4 +6,9 @@ export default defineConfig({
   site: 'https://tmfolio.site',
   base: '/',
   integrations: [tailwind(), react()],
+  vite: {
+    ssr: {
+      noExternal: ['three', '@react-three/fiber', '@react-three/drei', 'maath'],
+    },
+  },
 });

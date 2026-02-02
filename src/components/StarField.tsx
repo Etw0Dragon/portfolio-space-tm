@@ -1,211 +1,180 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useRef, Suspense, useEffect } from 'react';
+import { Canvas, useFrame } from "@react-three/fiber";
+import { Points, PointMaterial } from "@react-three/drei";
+import type { Points as PointsType } from "three";
 
-const StarField: React.FC = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+const StarBackground: React.FC = (props: any) => {
+  const ref = useRef<PointsType | null>(null);
+  const [isHovering, setIsHovering] = useState(false);
+  const [isGravitating, setIsGravitating] = useState(false);
+
+  const [stars] = useState(() => {
+    // Check if we are on mobile to reduce count even more
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    const count = isMobile ? 1000 : 2000; 
+    const points = new Float32Array(count * 3);
+    const originals = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
+        // Randomly distribute stars in a wider sphere for background
+        const r = 2 + Math.random() * 3;
+        const theta = 2 * Math.PI * Math.random();
+        const phi = Math.acos(2 * Math.random() - 1);
+        
+        const x = r * Math.sin(phi) * Math.cos(theta);
+        const y = r * Math.sin(phi) * Math.sin(theta);
+        const z = r * Math.cos(phi);
+        
+        points[i * 3] = x;
+        points[i * 3 + 1] = y;
+        points[i * 3 + 2] = z;
+        originals[i * 3] = x;
+        originals[i * 3 + 1] = y;
+        originals[i * 3 + 2] = z;
+    }
+    return { points, originals, count };
+  });
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const startHover = () => setIsHovering(true);
+    const endHover = () => setIsHovering(false);
+    const startGravitation = () => setIsGravitating(true);
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    let width = window.innerWidth;
-    let height = window.innerHeight;
-    let isGravitating = false;
-    let isHovering = false;
-    let hoverStrength = 0; // New variable to track hover intensity
-    let isFadingOut = false;
-    let globalOpacity = 1;
-    let explosionParticles: { x: number; y: number; vx: number; vy: number; size: number; opacity: number; life: number }[] = [];
-
-    const resize = () => {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = width;
-      canvas.height = height;
-    };
-
-    const startGravitation = () => {
-        isGravitating = true;
-        isHovering = false;
-    };
-
-    const startHover = () => {
-        isHovering = true;
-    };
-
-    const endHover = () => {
-        isHovering = false;
-    };
-
-    const triggerExplosion = () => {
-        const centerX = width / 2;
-        const centerY = height / 2;
-        for (let i = 0; i < 400; i++) {
-            const angle = Math.random() * Math.PI * 2;
-            const velocity = 2 + Math.random() * 25;
-            explosionParticles.push({
-                x: centerX,
-                y: centerY,
-                vx: Math.cos(angle) * velocity,
-                vy: Math.sin(angle) * velocity,
-                size: Math.random() * 4 + 1,
-                opacity: 1,
-                life: 1.0
-            });
-        }
-        
-        // Start fading the background slightly after explosion
-        setTimeout(() => {
-            isFadingOut = true;
-        }, 800);
-    };
-
-    window.addEventListener('resize', resize);
-    window.addEventListener('blackhole-start', startGravitation);
     window.addEventListener('blackhole-hover-start', startHover);
     window.addEventListener('blackhole-hover-end', endHover);
-    window.addEventListener('blackhole-explode', triggerExplosion);
-    resize();
-
-    const stars: { 
-        x: number; 
-        y: number; 
-        originX: number; // Store original position
-        originY: number;
-        size: number; 
-        speed: number; 
-        opacity: number;
-        angle?: number;
-        radius?: number;
-        orbitalSpeed?: number;
-    }[] = [];
-    const numStars = 200;
-
-    for (let i = 0; i < numStars; i++) {
-      const rx = Math.random() * width;
-      const ry = Math.random() * height;
-      stars.push({
-        x: rx,
-        y: ry,
-        originX: rx,
-        originY: ry,
-        size: Math.random() * 2,
-        speed: Math.random() * 0.2 + 0.1,
-        opacity: Math.random()
-      });
-    }
-
-    const animate = () => {
-      if (isFadingOut) {
-          globalOpacity = Math.max(0, globalOpacity - 0.015);
-      }
-
-      if (isHovering && !isGravitating) {
-          hoverStrength = Math.min(1, hoverStrength + 0.02);
-      } else if (!isGravitating) {
-          hoverStrength = Math.max(0, hoverStrength - 0.01);
-      } else {
-          hoverStrength = 1;
-      }
-      
-      ctx.clearRect(0, 0, width, height);
-      ctx.globalAlpha = globalOpacity;
-      
-      const centerX = width / 2;
-      const centerY = height / 2;
-
-      stars.forEach((star, i) => {
-        // Continuous background movement for origin
-        star.originY += star.speed;
-        if (star.originY > height) {
-            star.originY = 0;
-        }
-
-        ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-        ctx.fill();
-
-        if (isGravitating || hoverStrength > 0) {
-            if (star.angle === undefined) {
-                star.angle = Math.atan2(star.y - centerY, star.x - centerX);
-                star.radius = Math.sqrt((star.x - centerX)**2 + (star.y - centerY)**2);
-                star.orbitalSpeed = (0.01 + Math.random() * 0.02) * (150 / (star.radius + 50)); 
-            }
-
-            const speedMultiplier = isGravitating ? 4 : (1 + hoverStrength * 0.5);
-            star.angle += (star.orbitalSpeed || 0.01) * speedMultiplier;
-            
-            if (isGravitating) {
-                star.radius = Math.max(0, (star.radius || 0) - 4);
-                star.opacity = Math.max(0, (star.opacity || 1) - 0.005);
-                star.x = centerX + Math.cos(star.angle) * (star.radius || 0);
-                star.y = centerY + Math.sin(star.angle) * (star.radius || 0);
-            } else {
-                const targetRadius = (star.radius || 500) * 0.7;
-                const currentRadius = (star.radius || 0) * (1 - 0.02) + (targetRadius * 0.02);
-                star.radius = currentRadius;
-
-                const swirlX = centerX + Math.cos(star.angle) * currentRadius;
-                const swirlY = centerY + Math.sin(star.angle) * currentRadius;
-                
-                star.x = star.originX * (1 - hoverStrength) + swirlX * hoverStrength;
-                star.y = star.originY * (1 - hoverStrength) + swirlY * hoverStrength;
-            }
-        } else {
-            star.angle = undefined;
-            star.radius = undefined;
-            star.x = star.originX;
-            star.y = star.originY;
-        }
-
-        if (!isGravitating) {
-            star.opacity = 0.3 + Math.sin(Date.now() * 0.002 + i) * 0.4;
-        }
-      });
-
-      // Explosion particles
-      for (let i = explosionParticles.length - 1; i >= 0; i--) {
-        const p = explosionParticles[i];
-        ctx.fillStyle = `rgba(255, 255, 255, ${p.opacity})`;
-        ctx.beginPath();
-        const flicker = Math.random() > 0.9 ? 1.5 : 1;
-        ctx.arc(p.x, p.y, p.size * flicker, 0, Math.PI * 2);
-        ctx.fill();
-
-        p.x += p.vx;
-        p.y += p.vy;
-        p.opacity -= 0.008;
-        p.life -= 0.008;
-
-        if (p.life <= 0) {
-            explosionParticles.splice(i, 1);
-        }
-      }
-
-      requestAnimationFrame(animate);
-    };
-
-    const animationId = requestAnimationFrame(animate);
+    window.addEventListener('blackhole-start', startGravitation);
 
     return () => {
-      window.removeEventListener('resize', resize);
-      window.removeEventListener('blackhole-start', startGravitation);
       window.removeEventListener('blackhole-hover-start', startHover);
       window.removeEventListener('blackhole-hover-end', endHover);
-      window.removeEventListener('blackhole-explode', triggerExplosion);
-      cancelAnimationFrame(animationId);
+      window.removeEventListener('blackhole-start', startGravitation);
     };
   }, []);
 
+  useFrame((_state, delta) => {
+    if (!ref.current) return;
+
+    const positions = ref.current.geometry.attributes.position.array as Float32Array;
+    
+    // Global slow rotation
+    ref.current.rotation.x -= delta / 30; // Slightly slower for better feel
+    ref.current.rotation.y -= delta / 35;
+
+    let needsForceUpdate = false;
+
+    if (isGravitating || isHovering) {
+        needsForceUpdate = true;
+        for (let i = 0; i < stars.count; i++) {
+            const idx = i * 3;
+            const x = positions[idx];
+            const y = positions[idx + 1];
+            const z = positions[idx + 2];
+
+            const distance = Math.sqrt(x*x + y*y + z*z) || 1e-6;
+
+            if (isGravitating) {
+                const pull = 3.0 * delta;
+                positions[idx] -= (x / distance) * pull;
+                positions[idx + 1] -= (y / distance) * pull;
+                positions[idx + 2] -= (z / distance) * pull;
+            } else {
+                const pullStrength = 0.5 * delta;
+                const spiralStrength = 0.3 * delta;
+
+                positions[idx] -= (x / distance) * pullStrength;
+                positions[idx + 1] -= (y / distance) * pullStrength;
+                positions[idx + 2] -= (z / distance) * pullStrength;
+
+                const angle = spiralStrength;
+                const cosA = Math.cos(angle);
+                const sinA = Math.sin(angle);
+                const nx = x * cosA - y * sinA;
+                const ny = x * sinA + y * cosA;
+                
+                positions[idx] = nx;
+                positions[idx + 1] = ny;
+            }
+        }
+    } else {
+        // Optimization: check if any star is far from its original position
+        // Only return if needed (heuristic: first few stars)
+        const checkCount = 50; 
+        let isReturning = false;
+        for (let i = 0; i < checkCount; i++) {
+            const idx = i * 3;
+            if (Math.abs(positions[idx] - stars.originals[idx]) > 0.01) {
+                isReturning = true;
+                break;
+            }
+        }
+
+        if (isReturning) {
+            needsForceUpdate = true;
+            for (let i = 0; i < stars.count; i++) {
+                const idx = i * 3;
+                positions[idx] += (stars.originals[idx] - positions[idx]) * 0.05;
+                positions[idx + 1] += (stars.originals[idx + 1] - positions[idx + 1]) * 0.05;
+                positions[idx + 2] += (stars.originals[idx + 2] - positions[idx + 2]) * 0.05;
+            }
+        }
+    }
+    
+    if (needsForceUpdate) {
+        ref.current.geometry.attributes.position.needsUpdate = true;
+    }
+  });
+
   return (
-    <canvas
-      ref={canvasRef}
-      className="fixed top-0 left-0 w-full h-full -z-10 pointer-events-none"
-      style={{ background: 'linear-gradient(to bottom, #0b0d17, #15192b)' }}
-    />
+    <group rotation={[0, 0, Math.PI / 4]}>
+      <Points
+        ref={ref}
+        stride={3}
+        positions={stars.points}
+        frustumCulled
+        {...props}
+      >
+        <PointMaterial
+          transparent
+          color="#fff"
+          size={0.003}
+          sizeAttenuation
+          depthWrite={false}
+        />
+      </Points>
+    </group>
+  );
+};
+
+const StarField: React.FC = () => {
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
+  return (
+    <div className="w-full h-full fixed inset-0 -z-10 pointer-events-none bg-[#030014]">
+      <Canvas 
+        camera={{ position: [0, 0, 1] }}
+        gl={{ 
+          antialias: false, 
+          alpha: true,
+          powerPreference: "high-performance",
+          preserveDrawingBuffer: false
+        }}
+        onCreated={({ gl }) => {
+          gl.domElement.addEventListener('webglcontextlost', (event) => {
+            event.preventDefault();
+            console.warn('WebGL context lost. Attempting to recover...');
+          }, false);
+        }}
+      >
+        <Suspense fallback={null}>
+          <StarBackground />
+        </Suspense>
+      </Canvas>
+    </div>
   );
 };
 

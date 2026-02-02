@@ -1,28 +1,104 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import { useState } from "react";
+import { SOCIALS } from "../constants";
 
-const Navbar: React.FC = () => {
+const Navbar = () => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   return (
-    <motion.nav 
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      className="fixed top-0 left-0 w-full z-50 bg-cosmic-900/80 backdrop-blur-md border-b border-cosmic-700/50 px-6 py-4"
-    >
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
-        <a href="/" className="text-xl font-orbitron font-bold text-white tracking-tighter">
-          PORT<span className="text-cosmic-500">FOLIO</span>
-        </a>
-
-        <div className="flex gap-8 items-center">
-          <a href="/" className="text-sm font-medium text-gray-300 hover:text-cosmic-500 transition-colors uppercase tracking-widest font-orbitron">
-            Accueil
-          </a>
-          <a href="/terminal" className="text-sm font-medium text-gray-300 hover:text-cosmic-500 transition-colors uppercase tracking-widest font-orbitron px-4 py-2 border border-cosmic-500/30 rounded-lg bg-cosmic-500/10">
-            Terminal CLI
-          </a>
+    <div className="w-full h-[65px] fixed top-0 shadow-lg shadow-[#2A0E61]/50 bg-[#03001427] backdrop-blur-md z-50 px-10">
+      {/* Navbar Container */}
+      <div className="w-full h-full flex items-center justify-between m-auto px-[10px]">
+        {/* Left Side (Empty per user request) */}
+        <div className="flex-1 hidden md:flex">
         </div>
+
+        {/* Web Navbar (Middle) */}
+        <div className="flex-[2] hidden md:flex flex-row items-center justify-center h-full">
+          <div className="flex items-center justify-center gap-10 border border-[#7042f861] bg-[#0300145e] px-[20px] py-[10px] rounded-full text-gray-200 font-orbitron text-sm">
+            <a
+              href="/"
+              className="cursor-pointer hover:text-[rgb(112,66,248)] transition uppercase tracking-widest"
+            >
+              Accueil
+            </a>
+
+            <a
+              href="/terminal"
+              className="cursor-pointer hover:text-[rgb(112,66,248)] transition text-cosmic-500 uppercase tracking-widest"
+            >
+              Terminal CLI
+            </a>
+          </div>
+        </div>
+
+        {/* Social Icons (Web - Right) */}
+        <div className="flex-1 hidden md:flex flex-row justify-end gap-5">
+          {SOCIALS.map(({ link, name, icon: Icon }) => (
+            <a
+              href={link}
+              target="_blank"
+              rel="noreferrer noopener"
+              key={name}
+              className="text-white hover:text-cosmic-500 transition-colors"
+            >
+              <Icon className="h-6 w-6" />
+            </a>
+          ))}
+        </div>
+
+        {/* Logo for mobile only on the left if needed, but the user didn't specify */}
+        <div className="md:hidden flex items-center">
+            <span className="text-white font-bold font-orbitron">TM</span>
+        </div>
+
+        {/* Hamburger Menu (Mobile) */}
+        <button
+          className="md:hidden text-white focus:outline-none text-4xl"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        >
+          ☰
+        </button>
       </div>
-    </motion.nav>
+
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="absolute top-[65px] left-0 w-full bg-[#030014] p-5 flex flex-col items-center text-gray-300 md:hidden border-b border-[#7042f861]">
+          {/* Links */}
+          <div className="flex flex-col items-center gap-4 font-orbitron">
+            <a
+              href="/"
+              className="cursor-pointer hover:text-[rgb(112,66,248)] transition text-center uppercase"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Accueil
+            </a>
+            <a
+              href="/terminal"
+              className="cursor-pointer hover:text-[rgb(112,66,248)] transition text-center text-cosmic-500 uppercase"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Terminal CLI
+            </a>
+          </div>
+
+          {/* Social Icons */}
+          <div className="flex justify-center gap-6 mt-6">
+            {SOCIALS.map(({ link, name, icon: Icon }) => (
+              <a
+                href={link}
+                target="_blank"
+                rel="noreferrer noopener"
+                key={name}
+                className="text-white hover:text-cosmic-500 transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <Icon className="h-8 w-8" />
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
