@@ -4,7 +4,7 @@ import { Github, Linkedin, Mail, Send } from 'lucide-react';
 
 const Contact: React.FC = () => {
   return (
-    <section id="contact" className="min-h-screen py-20 px-4 flex flex-col items-center justify-center relative overflow-hidden">
+    <section id="contact" className="min-h-screen py-32 px-4 flex flex-col items-center justify-center relative overflow-hidden">
       {/* Decorative localized glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-cosmic-500/10 rounded-full blur-[100px] pointer-events-none"></div>
 

@@ -11,12 +11,12 @@ const StarBackground: React.FC = (props: any) => {
   const [stars] = useState(() => {
     // Check if we are on mobile to reduce count even more
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-    const count = isMobile ? 1000 : 2000; 
+    const count = isMobile ? 3000 : 8000; 
     const points = new Float32Array(count * 3);
     const originals = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
         // Randomly distribute stars in a wider sphere for background
-        const r = 2 + Math.random() * 3;
+        const r = 2 + Math.random() * 8;
         const theta = 2 * Math.PI * Math.random();
         const phi = Math.acos(2 * Math.random() - 1);
         
@@ -135,9 +135,10 @@ const StarBackground: React.FC = (props: any) => {
         <PointMaterial
           transparent
           color="#fff"
-          size={0.003}
-          sizeAttenuation
+          size={0.015}
+          sizeAttenuation={true}
           depthWrite={false}
+          blending={1} // Additive blending for glows
         />
       </Points>
     </group>
@@ -154,7 +155,7 @@ const StarField: React.FC = () => {
   if (!mounted) return null;
 
   return (
-    <div className="w-full h-full fixed inset-0 -z-10 pointer-events-none bg-[#030014]">
+    <div className="w-full h-full fixed inset-0 -z-20 pointer-events-none">
       <Canvas 
         camera={{ position: [0, 0, 1] }}
         gl={{ 

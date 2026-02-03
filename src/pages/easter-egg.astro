@@ -5,12 +5,12 @@ import SuccessPopup from '../components/SuccessPopup';
 ---
 
 <Layout title="Easter Egg Découvert ! | Tom Moreau" showNavbar={false}>
-	<main class="relative min-h-screen flex items-center justify-center overflow-hidden bg-cosmic-900">
+	<main class="relative min-h-screen flex items-center justify-center overflow-hidden bg-transparent">
 		<!-- Slow Illumination Effect -->
 		<div class="absolute inset-0 bg-black z-40 animate-slow-illuminate pointer-events-none"></div>
         <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-cosmic-500/20 rounded-full blur-[150px] animate-pulse-slow"></div>
         
-        <StarField client:only="react" />
+        <StarField client:only="react" transition:persist />
 
 		<div class="z-50 text-center px-4">
 			<SuccessPopup client:load />

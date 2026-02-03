@@ -3,6 +3,7 @@ import '@fontsource/inter';
 import '@fontsource/space-grotesk';
 import '@fontsource/orbitron';
 import Navbar from '../components/Navbar';
+import MobileNotice from '../components/MobileNotice';
 import { ViewTransitions } from 'astro:transitions';
 
 interface Props {
@@ -26,6 +27,7 @@ const { title, showNavbar = true } = Astro.props;
 	</head>
 	<body class="text-cosmic-100 overflow-x-hidden selection:bg-cosmic-500 selection:text-white">
 		{showNavbar && <Navbar client:load />}
+		<MobileNotice client:only="react" />
 		<slot />
 	</body>
 </html>

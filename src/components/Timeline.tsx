@@ -104,7 +104,7 @@ const Timeline: React.FC = () => {
 
   const titleOpacity = useTransform(scrollYProgress, [0, 0.3, 0.4], [1, 1, 0]);
   const lineOpacity = useTransform(scrollYProgress, [0, 0.4, 0.5], [1, 1, 0]);
-  const planetsOpacity = useTransform(scrollYProgress, [0.45, 0.65], [0, 1]);
+  const planetsOpacity = useTransform(scrollYProgress, [0.45, 0.65, 0.9, 1], [0, 1, 1, 0]);
   const planetsScale = useTransform(scrollYProgress, [0.45, 0.75], [0.8, 1]);
   
   // Use state for pointer events to ensure reliability
@@ -135,8 +135,8 @@ const Timeline: React.FC = () => {
   };
 
   return (
-    <section ref={containerRef} id="timeline" className="h-[280vh] relative bg-transparent">
-      <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden">
+    <section ref={containerRef} id="timeline" className="h-[300vh] relative bg-transparent">
+      <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center">
         <motion.div 
           className={`max-w-4xl w-full px-4 relative z-20 pt-32 md:pt-40 ${isTimelineActive ? 'pointer-events-auto' : 'pointer-events-none'}`}
         >
@@ -240,8 +240,8 @@ const Timeline: React.FC = () => {
 
               {planets.map((planet, i) => {
                   const angle = (i / planets.length) * Math.PI * 2;
-                  const radius = 200;
-                  const mdRadius = 320;
+                  const radius = 180;
+                  const mdRadius = 280;
                   
                   return (
                       <PlanetComponent 
