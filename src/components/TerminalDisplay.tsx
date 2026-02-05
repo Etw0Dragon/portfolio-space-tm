@@ -27,11 +27,11 @@ const TerminalDisplay: React.FC = () => {
     setIsAnimating(true);
     window.dispatchEvent(new Event('blackhole-start'));
     
-    // Add an initial entry for the animation
+    // Entrée initiale pour l'anim
     setHistory(prev => [...prev, { command: './blackhole', output: BLACKHOLE_ANIMATION[0] }]);
 
     for (let frameIndex = 1; frameIndex < BLACKHOLE_ANIMATION.length; frameIndex++) {
-      // Trigger global background explosion at the right moment (Phase 3 start ~ frame 45)
+      // Trigger explosion bg (Phase 3 ~ frame 45)
       if (frameIndex === 45) {
           window.dispatchEvent(new Event('blackhole-explode'));
       }
@@ -47,7 +47,7 @@ const TerminalDisplay: React.FC = () => {
       });
     }
 
-    // After animation, show a transition message to avoid "freeze" feel
+    // Message transition post-anim pour éviter le freeze
     setHistory(prev => [...prev, { 
       command: '', 
       output: [
@@ -61,13 +61,13 @@ const TerminalDisplay: React.FC = () => {
 
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    // Initiate fade out before redirect
+    // Init du fade out avant redirect
     setIsRedirecting(true);
     
-    // Tiny delay to let the fade start
+    // Micro délai pour le fade
     await new Promise(resolve => setTimeout(resolve, 700));
     
-    // Final Redirect
+    // Redirect final
     window.location.href = '/easter-egg';
   };
 
@@ -100,7 +100,7 @@ const TerminalDisplay: React.FC = () => {
       if (matches.length === 1) {
         setInput(matches[0]);
       } else if (matches.length > 1) {
-        // Find common prefix
+        // Check préfixe commun
         let common = matches[0];
         for (let i = 1; i < matches.length; i++) {
           let j = 0;
@@ -113,7 +113,7 @@ const TerminalDisplay: React.FC = () => {
         if (common.length > currentInput.length) {
           setInput(common);
         } else {
-          // List matches in history like a real shell
+          // Liste des matchs dans l'historique style shell
           const suggestionLine = matches.map(m => {
               if (m.startsWith('cat ')) return m.slice(4);
               if (m.startsWith('./')) return m.slice(2);
@@ -194,13 +194,13 @@ const TerminalDisplay: React.FC = () => {
       className={`w-full max-w-5xl mx-auto h-[750px] bg-transparent border border-cosmic-700/50 rounded-lg p-4 font-mono text-green-400 shadow-2xl flex flex-col overflow-hidden relative transition-opacity duration-500 ${isRedirecting ? 'opacity-0' : 'opacity-100'}`}
       onClick={() => inputRef.current?.focus()}
     >
-      {/* Background for Terminal when not animating */}
+      {/* Back terminal hors anim */}
       <div className={`absolute inset-0 bg-black/90 -z-10 transition-opacity duration-1000 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}></div>
 
-      {/* Fixed Overlay for Blackhole Animation - Covers entire screen */}
+      {/* Overlay fixe anim trou noir (full screen) */}
       {isAnimating && (
         <div className={`fixed inset-0 z-[100] bg-transparent flex flex-col items-center justify-center p-0 transition-opacity duration-700 ${isRedirecting ? 'opacity-0' : 'opacity-100'}`}>
-             {/* Dark backdrop blur to see StarField behind stars */}
+             {/* Blur sombre pour voir le StarField en fond */}
              <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] -z-10"></div>
              
              <div className={`text-gray-200 font-mono whitespace-pre text-center w-full h-full flex flex-col justify-center overflow-hidden ${

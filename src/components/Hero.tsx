@@ -35,7 +35,7 @@ const Hero: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Decorative Planet (Back to original but nicer) */}
+      {/* Planète déco - version clean */}
       <motion.div
         className="absolute -right-20 md:right-20 top-1/4 w-64 h-64 md:w-96 md:h-96 rounded-full opacity-20 pointer-events-none"
         style={{
@@ -53,7 +53,7 @@ const Hero: React.FC = () => {
         }}
       />
 
-      {/* Scroll Indicator */}
+      {/* Indicateur scroll */}
       <motion.div 
         className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 cursor-pointer"
         animate={{ y: [0, 10, 0] }}

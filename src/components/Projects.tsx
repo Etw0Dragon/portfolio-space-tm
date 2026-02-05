@@ -93,7 +93,7 @@ const Projects: React.FC = () => {
         </div>
       </div>
 
-      {/* Modal for Homelab Detail */}
+      {/* Modal détail Homelab */}
       <AnimatePresence>
         {selectedId === 'homelab' && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8">

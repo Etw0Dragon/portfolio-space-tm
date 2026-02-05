@@ -9,7 +9,7 @@ const SuccessPopup: React.FC = () => {
       transition={{ duration: 1.5, delay: 1 }}
       className="bg-cosmic-800/40 backdrop-blur-3xl border border-cosmic-500/30 p-10 md:p-16 rounded-[2rem] shadow-[0_0_100px_rgba(127,90,240,0.15)] max-w-3xl mx-auto relative overflow-hidden"
     >
-      {/* Decorative glow inside */}
+      {/* Glow déco interne */}
       <div className="absolute -top-24 -left-24 w-48 h-48 bg-cosmic-500/20 rounded-full blur-3xl"></div>
       
       <h1 className="text-4xl md:text-6xl font-display font-black mb-8 text-white tracking-tight">

@@ -1,15 +1,15 @@
 export const BLACKHOLE_ANIMATION = (() => {
   const frames: string[][] = [];
-  const numFrames = 60; // 100 might be too much for file size, 60 is a good balance for fluidity
+  const numFrames = 60; // 100 trop lourd en weight, 60 c'est le bon spot pour la fluidité
   
-  // Density ramp for "points" style
+  // Rampe de densité style "points"
   const density = [" ", ".", ":", "-", "=", "+", "*", "#", "%", "@"];
   const getChar = (val: number) => {
     const idx = Math.floor(val * (density.length - 1));
     return density[Math.min(idx, density.length - 1)];
   };
 
-  // Phase 1: Rotation & Growth (0-40)
+  // Phase 1 : Rotation & Growth (0-40)
   for (let i = 0; i < 40; i++) {
     const coreSize = 4 + (i / 8);
     const ringSize = coreSize + 5;
@@ -19,21 +19,21 @@ export const BLACKHOLE_ANIMATION = (() => {
     for (let y = -15; y <= 15; y++) {
       let line = "";
       for (let x = -40; x <= 40; x++) {
-        // Adjusted ratio for circularity in terminal (x is wider than y)
+        // Ratio ajusté pour circularité terminal (x plus large que y)
         const dx = x * 0.5;
         const dy = y;
         const dist = Math.sqrt(dx * dx + dy * dy);
         
         if (dist < coreSize) {
-          // The Dark Center (The Hole)
+          // Centre sombre (Trou noir)
           line += " "; 
         } else if (dist < coreSize + 0.8) {
-          // Event Horizon (Brightest edge)
+          // Horizon des évènements (Bord brillant)
           line += "@";
         } else {
-          // Accretion Disk / Rings
+          // Disque d'accrétion / Anneaux
           const angleToPoint = Math.atan2(dy, dx);
-          // Create 2-3 distinct rings
+          // Création de 2-3 anneaux distincts
           const ringPattern = Math.sin(dist - coreSize - angle * 2) * 0.5 + 0.5;
           const spiralPattern = Math.sin(angleToPoint * 2 + dist * 0.5 - angle * 3) * 0.5 + 0.5;
           
@@ -52,7 +52,7 @@ export const BLACKHOLE_ANIMATION = (() => {
     frames.push(frame);
   }
 
-  // Phase 2: Implosion (40-45)
+  // Phase 2 : Implosion (40-45)
   for (let i = 0; i < 5; i++) {
     const frame: string[] = [];
     const size = 5 - i;
@@ -70,7 +70,7 @@ export const BLACKHOLE_ANIMATION = (() => {
     frames.push(frame);
   }
 
-  // Phase 3: Explosion (45-65)
+  // Phase 3 : Explosion (45-65)
   for (let i = 0; i < 20; i++) {
     const frame: string[] = [];
     const expansion = i * 4;
@@ -94,7 +94,7 @@ export const BLACKHOLE_ANIMATION = (() => {
     frames.push(frame);
   }
 
-  // Phase 4: Scattering Stars & Expansion (65-100)
+  // Phase 4 : Scattering des étoiles & Expansion (65-100)
   for (let i = 0; i < 35; i++) {
     const frame: string[] = [];
     const expansion = 15 + i * 2;
@@ -105,14 +105,14 @@ export const BLACKHOLE_ANIMATION = (() => {
         const dy = y;
         const dist = Math.sqrt(dx * dx + dy * dy);
         
-        // Stars flying out from center
+        // Étoiles qui partent du centre
         const isStar = Math.random() > 0.97;
         const inExpansionZone = dist < expansion && dist > expansion - 10;
         
         if (inExpansionZone && isStar) {
            line += Math.random() > 0.5 ? "*" : ".";
         } else if (dist < expansion - 10 && Math.random() > 0.99) {
-           // Lingering dust
+           // Poussière résiduelle
            line += ".";
         } else {
            line += " ";

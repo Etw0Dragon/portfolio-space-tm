@@ -6,13 +6,13 @@ const Navbar = () => {
 
   return (
     <div className="w-full h-[65px] fixed top-0 shadow-lg shadow-[#2A0E61]/50 bg-[#03001427] backdrop-blur-md z-50 px-10">
-      {/* Navbar Container */}
+      {/* Container Navbar */}
       <div className="w-full h-full flex items-center justify-between m-auto px-[10px]">
-        {/* Left Side (Empty per user request) */}
+        {/* Côté gauche (vide) */}
         <div className="flex-1 hidden md:flex">
         </div>
 
-        {/* Web Navbar (Middle) */}
+        {/* Navbar Web (Mid) */}
         <div className="flex-[2] hidden md:flex flex-row items-center justify-center h-full">
           <div className="flex items-center justify-center gap-10 border border-[#7042f861] bg-[#0300145e] px-[20px] py-[10px] rounded-full text-gray-200 font-orbitron text-sm">
             <a
@@ -31,7 +31,7 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Social Icons (Web - Right) */}
+        {/* Socials (Web - Right) */}
         <div className="flex-1 hidden md:flex flex-row justify-end gap-5">
           {SOCIALS.map(({ link, name, icon: Icon }) => (
             <a
@@ -46,12 +46,12 @@ const Navbar = () => {
           ))}
         </div>
 
-        {/* Logo for mobile only on the left if needed, but the user didn't specify */}
+        {/* Logo mobile side gauche si besoin */}
         <div className="md:hidden flex items-center">
             <span className="text-white font-bold font-orbitron">TM</span>
         </div>
 
-        {/* Hamburger Menu (Mobile) */}
+        {/* Menu burger (Mobile) */}
         <button
           className="md:hidden text-white focus:outline-none text-4xl"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -60,10 +60,10 @@ const Navbar = () => {
         </button>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Menu Mobile */}
       {isMobileMenuOpen && (
         <div className="absolute top-[65px] left-0 w-full bg-[#030014] p-5 flex flex-col items-center text-gray-300 md:hidden border-b border-[#7042f861]">
-          {/* Links */}
+          {/* Liens */}
           <div className="flex flex-col items-center gap-4 font-orbitron">
             <a
               href="/"
@@ -81,8 +81,8 @@ const Navbar = () => {
             </a>
           </div>
 
-          {/* Social Icons */}
-          <div className="flex justify-center gap-6 mt-6">
+          {/* Socials */}
+          <div className="flex flex-row gap-8 mt-6">
             {SOCIALS.map(({ link, name, icon: Icon }) => (
               <a
                 href={link}

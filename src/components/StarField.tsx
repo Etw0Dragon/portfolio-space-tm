@@ -9,13 +9,13 @@ const StarBackground: React.FC = (props: any) => {
   const [isGravitating, setIsGravitating] = useState(false);
 
   const [stars] = useState(() => {
-    // Check if we are on mobile to reduce count even more
+    // Check si mobile pour down le compte
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
     const count = isMobile ? 3000 : 8000; 
     const points = new Float32Array(count * 3);
     const originals = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
-        // Randomly distribute stars in a wider sphere for background
+        // Distribution random en sphère large
         const r = 2 + Math.random() * 8;
         const theta = 2 * Math.PI * Math.random();
         const phi = Math.acos(2 * Math.random() - 1);
@@ -55,8 +55,8 @@ const StarBackground: React.FC = (props: any) => {
 
     const positions = ref.current.geometry.attributes.position.array as Float32Array;
     
-    // Global slow rotation
-    ref.current.rotation.x -= delta / 30; // Slightly slower for better feel
+    // Rotation globale slow
+    ref.current.rotation.x -= delta / 30; // Un peu plus slow pour le feel
     ref.current.rotation.y -= delta / 35;
 
     let needsForceUpdate = false;
@@ -95,8 +95,8 @@ const StarBackground: React.FC = (props: any) => {
             }
         }
     } else {
-        // Optimization: check if any star is far from its original position
-        // Only return if needed (heuristic: first few stars)
+        // Opti : check si les étoiles sont loin du point d'origine
+        // Seul le return si besoin (quelques étoiles)
         const checkCount = 50; 
         let isReturning = false;
         for (let i = 0; i < checkCount; i++) {
@@ -138,7 +138,7 @@ const StarBackground: React.FC = (props: any) => {
           size={0.015}
           sizeAttenuation={true}
           depthWrite={false}
-          blending={1} // Additive blending for glows
+          blending={1} // Blending additif pour les glows
         />
       </Points>
     </group>

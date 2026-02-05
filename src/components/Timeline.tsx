@@ -49,7 +49,7 @@ const TimelineItem: React.FC<TimelineItemProps> = ({ item, index, scrollYProgres
   const x = useTransform(
     scrollYProgress,
     [0.35, 0.55],
-    [0, index % 2 === 0 ? 300 : -300] // Reduced from 1200 for better performance & feel
+    [0, index % 2 === 0 ? 300 : -300] // Down de 1200 pour opti perf & feel
   );
   
   const opacity = useTransform(
@@ -107,7 +107,7 @@ const Timeline: React.FC = () => {
   const planetsOpacity = useTransform(scrollYProgress, [0.45, 0.65, 0.9, 1], [0, 1, 1, 0]);
   const planetsScale = useTransform(scrollYProgress, [0.45, 0.75], [0.8, 1]);
   
-  // Use state for pointer events to ensure reliability
+  // State pointer events pour la fiabilité
   const [isInteractive, setIsInteractive] = useState(false);
   const [isTimelineActive, setIsTimelineActive] = useState(true);
 
@@ -148,7 +148,7 @@ const Timeline: React.FC = () => {
           </div>
 
           <div className="relative">
-            {/* Vertical Line */}
+            {/* Ligne mid */}
             <motion.div 
               style={{ opacity: lineOpacity }}
               className="absolute left-0 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-cosmic-500 via-cosmic-900 to-transparent md:-translate-x-1/2"
@@ -167,7 +167,7 @@ const Timeline: React.FC = () => {
           </div>
         </motion.div>
 
-        {/* Planets reveal */}
+        {/* Reveal plantete */}
         <motion.div 
           style={{ 
               opacity: planetsOpacity,
@@ -176,7 +176,7 @@ const Timeline: React.FC = () => {
           className={`absolute inset-0 flex items-center justify-center z-[100] ${isInteractive ? 'pointer-events-auto' : 'pointer-events-none'}`}
         >
           <div className="relative w-full h-full flex items-center justify-center">
-              {/* Central Black Hole (visible during planet phase) */}
+              {/* Trou noir mid (phase planètes) */}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0">
                 <motion.button
                   onClick={handleBlackHoleClick}
@@ -193,7 +193,7 @@ const Timeline: React.FC = () => {
                   }}
                   className="relative w-32 h-32 md:w-48 md:h-48 cursor-pointer flex items-center justify-center group z-0"
                 >
-                  {/* Black Hole Video Asset */}
+                  {/* Asset vidéo trou noir */}
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                     <video
                       autoPlay
@@ -212,7 +212,7 @@ const Timeline: React.FC = () => {
                     </video>
                   </div>
 
-                  {/* Enhanced integration glow */}
+                  {/* Glow d'intégration up */}
                   <motion.div
                     className="absolute inset-[-50%] rounded-full pointer-events-none z-[-1]"
                     style={{ 
@@ -288,7 +288,7 @@ const PlanetComponent: React.FC<{ planet: any, angle: number, baseRadius: number
             }}
             className="absolute flex flex-col items-center group pointer-events-none z-10"
         >
-            {/* Planetary Rings - Reduced complexity */}
+            {/* Anneaux planétaires - complexité down */}
             <div className="absolute w-20 h-20 md:w-32 md:h-32 pointer-events-none">
                 <div 
                     className="absolute inset-0 rounded-full border border-cosmic-500/20 shadow-[0_0_10px_rgba(127,90,240,0.1)]"

@@ -37,7 +37,7 @@ const MobileNotice: React.FC = () => {
           className="fixed bottom-6 left-6 right-6 z-[200] md:hidden"
         >
           <div className="bg-[#0b0d17]/95 border border-cosmic-500/50 backdrop-blur-xl p-6 rounded-2xl shadow-[0_0_40px_rgba(127,90,240,0.4)] relative overflow-hidden">
-            {/* Background glow decoration */}
+            {/* Déco glow background */}
             <div className="absolute -top-10 -right-10 w-32 h-32 bg-cosmic-500/20 rounded-full blur-3xl pointer-events-none"></div>
             <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
             

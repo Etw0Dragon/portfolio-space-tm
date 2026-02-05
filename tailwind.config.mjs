@@ -6,7 +6,7 @@ export default {
 			colors: {
 				cosmic: {
 					900: '#0b0d17', // Noir profond
-					800: '#15192b', // Slightly lighter dark
+					800: '#15192b', // Dark un peu plus light
 					700: '#1b2a4e', // Bleu spatial
 					500: '#7f5af0', // Violet nébuleuse
 					100: '#eaeaea', // Blanc doux

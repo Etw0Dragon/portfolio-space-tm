@@ -28,7 +28,7 @@ const About: React.FC = () => {
             variants={containerVariants}
             className="grid md:grid-cols-2 gap-12 items-center"
         >
-          {/* Card */}
+          {/* Carte info */}
           <motion.div 
             variants={itemVariants}
             className="bg-cosmic-800/80 p-8 rounded-2xl border border-cosmic-700 backdrop-blur-sm shadow-2xl relative group"
@@ -60,7 +60,7 @@ const About: React.FC = () => {
              </div>
           </motion.div>
 
-          {/* Context/Visual */}
+          {/* Visuel / Contexte */}
           <motion.div variants={itemVariants} className="text-center md:text-left">
              <h3 className="text-2xl font-orbitron mb-4 text-cosmic-100">Objectif </h3>
              <p className="text-gray-400 hover:text-gray-200 transition-colors duration-300 text-lg">
