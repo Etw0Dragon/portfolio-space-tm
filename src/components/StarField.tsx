@@ -170,6 +170,7 @@ const StarField: React.FC = () => {
             console.warn('WebGL context lost. Attempting to recover...');
           }, false);
         }}
+        style={{ position: 'absolute', top: 0, left: 0, zIndex: -10 }}
       >
         <Suspense fallback={null}>
           <StarBackground />

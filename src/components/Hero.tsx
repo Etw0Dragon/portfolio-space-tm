@@ -35,23 +35,7 @@ const Hero: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Planète déco - version clean */}
-      <motion.div
-        className="absolute -right-20 md:right-20 top-1/4 w-64 h-64 md:w-96 md:h-96 rounded-full opacity-20 pointer-events-none"
-        style={{
-          background: 'radial-gradient(circle at 30% 30%, #7f5af0, transparent 70%)',
-          boxShadow: '0 0 80px rgba(127, 90, 240, 0.2)'
-        }}
-        animate={{ 
-          y: [0, -20, 0],
-          rotate: [0, 5, 0]
-        }}
-        transition={{ 
-          duration: 6,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
+
 
       {/* Indicateur scroll */}
       <motion.div 

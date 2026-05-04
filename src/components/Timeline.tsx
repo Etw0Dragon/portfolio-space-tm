@@ -1,5 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { motion, useScroll, useTransform, AnimatePresence, MotionValue } from 'framer-motion';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import type { MotionValue } from 'framer-motion';
+import NativeBlackHoleLoader from './NativeBlackHoleLoader';
 
 const timelineData = [
   {
@@ -29,14 +31,14 @@ const timelineData = [
 ];
 
 const planets = [
-  { name: "Docker", logo: "/img/docker.png", color: "#2496ed" },
-  { name: "Linux", logo: "/img/linux.png", color: "#fcc624" },
-  { name: "Git", logo: "/img/git.png", color: "#f05032" },
-  { name: "Astro", logo: "/img/astro.png", color: "#ff5d01" },
-  { name: "TypeScript", logo: "/img/typescript.png", color: "#3178c6" },
-  { name: "Go", logo: "/img/go.png", color: "#00add8" },
-  { name: "C", logo: "/img/c.png", color: "#a8b9cc" },
-  { name: "K3s", logo: "/img/K3S.png", color: "#326ce5" },
+  { name: "C", logo: "/img/c.png", color: "#a8b9cc", depth: 1.05 },
+  { name: "K3s", logo: "/img/K3S.png", color: "#326ce5", depth: 0.96 },
+  { name: "Docker", logo: "/img/docker.png", color: "#2496ed", depth: 0.98 },
+  { name: "Linux", logo: "/img/linux.png", color: "#fcc624", depth: 1.04 },
+  { name: "Git", logo: "/img/git.png", color: "#f05032", depth: 1.08 },
+  { name: "Astro", logo: "/img/astro.png", color: "#ff5d01", depth: 1.02 },
+  { name: "TypeScript", logo: "/img/typescript.png", color: "#3178c6", depth: 0.98 },
+  { name: "Go", logo: "/img/go.png", color: "#00add8", depth: 1.0 },
 ];
 
 interface TimelineItemProps {
@@ -191,33 +193,23 @@ const Timeline: React.FC = () => {
                     damping: 25,
                     opacity: { duration: 0.2 }
                   }}
-                  className="relative w-32 h-32 md:w-48 md:h-48 cursor-pointer flex items-center justify-center group z-0"
+                  className="relative w-40 h-40 md:w-64 md:h-64 cursor-pointer flex items-center justify-center group z-0"
                 >
                   {/* Asset vidéo trou noir */}
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <video
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                      preload="auto"
-                      style={{ 
-                        maskImage: 'radial-gradient(circle, black 25%, transparent 60%)',
-                        WebkitMaskImage: 'radial-gradient(circle, black 25%, transparent 60%)',
-                        filter: 'contrast(1.5) brightness(1) saturate(1.2)'
-                      }}
-                      className="w-[800px] h-[800px] md:w-[1000px] md:h-[1000px] max-w-none object-contain mix-blend-screen pointer-events-none"
-                    >
-                      <source src="/videos/blackhole.webm" type="video/webm" />
-                    </video>
-                  </div>
+                    <div className="pointer-events-none scale-[1.24] md:scale-[1.28]">
+                      <NativeBlackHoleLoader 
+                        className="w-[1120px] h-[1120px] md:w-[1560px] md:h-[1560px] max-w-none object-contain pointer-events-none"
+                      />
+                    </div>
+                    </div>
 
-                  {/* Glow d'intégration up */}
-                  <motion.div
-                    className="absolute inset-[-50%] rounded-full pointer-events-none z-[-1]"
+                    {/* Glow d'intégration up */}
+                    <motion.div
+                    className="absolute inset-[-65%] rounded-full pointer-events-none z-[-1]"
                     style={{ 
-                      background: 'radial-gradient(circle, rgba(127, 90, 240, 0.3) 0%, transparent 70%)',
-                      filter: 'blur(40px)'
+                      background: 'radial-gradient(circle, rgba(127, 90, 240, 0.34) 0%, rgba(49, 120, 198, 0.12) 36%, transparent 72%)',
+                      filter: 'blur(46px)'
                     }}
                     animate={{ 
                       scale: isHovering ? 1.2 : 1,
@@ -238,18 +230,35 @@ const Timeline: React.FC = () => {
                 </motion.button>
               </div>
 
+              <motion.div
+                className="pointer-events-none absolute left-1/2 top-1/2 z-[1] h-[190px] w-[350px] -translate-x-1/2 -translate-y-1/2 rotate-[-8deg] rounded-full border border-cosmic-500/20 shadow-[0_0_24px_rgba(127,90,240,0.18)] md:h-[330px] md:w-[620px]"
+                animate={{
+                  opacity: isSucking ? 0 : isHovering ? 0.16 : 0.36,
+                  scale: isHovering ? 0.72 : 1,
+                }}
+                transition={{ duration: isHovering ? 1.2 : 0.8, ease: "easeOut" }}
+              />
+              <motion.div
+                className="pointer-events-none absolute left-1/2 top-1/2 z-[1] h-[120px] w-[260px] -translate-x-1/2 -translate-y-1/2 rotate-[9deg] rounded-full border border-blue-300/10 md:h-[220px] md:w-[460px]"
+                animate={{
+                  opacity: isSucking ? 0 : isHovering ? 0.1 : 0.28,
+                  scale: isHovering ? 0.58 : 1,
+                }}
+                transition={{ duration: isHovering ? 1.2 : 0.8, ease: "easeOut" }}
+              />
+
               {planets.map((planet, i) => {
-                  const angle = (i / planets.length) * Math.PI * 2;
-                  const radius = 180;
-                  const mdRadius = 280;
+                  const angle = (i / planets.length) * Math.PI * 2 - Math.PI / 2;
                   
                   return (
                       <PlanetComponent 
                          key={planet.name}
                          planet={planet}
                          angle={angle}
-                         baseRadius={radius}
-                         mdRadius={mdRadius}
+                         baseRadiusX={176}
+                         baseRadiusY={122}
+                         mdRadiusX={312}
+                         mdRadiusY={196}
                          isHovering={isHovering}
                          isSucking={isSucking}
                          isMobile={isMobile}
@@ -263,10 +272,12 @@ const Timeline: React.FC = () => {
   );
 };
 
-const PlanetComponent: React.FC<{ planet: any, angle: number, baseRadius: number, mdRadius: number, isHovering: boolean, isSucking: boolean, isMobile: boolean }> = ({ planet, angle, baseRadius, mdRadius, isHovering, isSucking, isMobile }) => {
-    const radius = isMobile ? baseRadius : mdRadius;
-    const targetX = Math.cos(angle) * (isHovering ? 0 : radius);
-    const targetY = Math.sin(angle) * (isHovering ? 0 : radius);
+const PlanetComponent: React.FC<{ planet: any, angle: number, baseRadiusX: number, baseRadiusY: number, mdRadiusX: number, mdRadiusY: number, isHovering: boolean, isSucking: boolean, isMobile: boolean }> = ({ planet, angle, baseRadiusX, baseRadiusY, mdRadiusX, mdRadiusY, isHovering, isSucking, isMobile }) => {
+    const radiusX = isMobile ? baseRadiusX : mdRadiusX;
+    const radiusY = isMobile ? baseRadiusY : mdRadiusY;
+    const targetX = Math.cos(angle) * (isHovering ? 0 : radiusX);
+    const targetY = Math.sin(angle) * (isHovering ? 0 : radiusY);
+    const depthScale = planet.depth ?? 1;
 
     return (
         <motion.div
@@ -279,7 +290,7 @@ const PlanetComponent: React.FC<{ planet: any, angle: number, baseRadius: number
             } : {
                 x: targetX,
                 y: targetY,
-                scale: isHovering ? 0 : 1,
+                scale: isHovering ? 0 : depthScale,
                 opacity: isHovering ? 0 : 1
             }}
             transition={isSucking ? { duration: 1.5, ease: "circIn" } : { 
@@ -292,12 +303,13 @@ const PlanetComponent: React.FC<{ planet: any, angle: number, baseRadius: number
             <div className="absolute w-20 h-20 md:w-32 md:h-32 pointer-events-none">
                 <div 
                     className="absolute inset-0 rounded-full border border-cosmic-500/20 shadow-[0_0_10px_rgba(127,90,240,0.1)]"
-                    style={{ transform: "rotateX(75deg) rotateY(10deg)" }}
+                    style={{ transform: `rotateX(75deg) rotateY(10deg) rotateZ(${angle}rad)` }}
                 />
             </div>
 
             <motion.div 
-                className="w-12 h-12 md:w-20 md:h-20 rounded-full bg-cosmic-800/90 border border-cosmic-500/50 backdrop-blur-md flex items-center justify-center p-3 md:p-4 shadow-[0_0_20px_rgba(127,90,240,0.3)] group-hover:shadow-[0_0_30px_rgba(127,90,240,0.6)] group-hover:border-cosmic-500 transition-all duration-300 z-10 pointer-events-auto"
+                className="w-12 h-12 md:w-20 md:h-20 rounded-full bg-cosmic-800/90 border backdrop-blur-md flex items-center justify-center p-3 md:p-4 shadow-[0_0_20px_rgba(127,90,240,0.3)] group-hover:shadow-[0_0_30px_rgba(127,90,240,0.6)] transition-all duration-300 z-10 pointer-events-auto"
+                style={{ borderColor: `${planet.color}99`, boxShadow: `0 0 22px ${planet.color}40` }}
             >
                 <img src={planet.logo} alt={planet.name} className="w-full h-full object-contain" />
             </motion.div>

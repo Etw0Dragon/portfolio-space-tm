@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { BLACKHOLE_ANIMATION } from '../utils/blackholeFrames';
 
 interface CommandOutput {
   command: string;
@@ -26,28 +25,16 @@ const TerminalDisplay: React.FC = () => {
   const runBlackholeAnimation = async () => {
     setIsAnimating(true);
     window.dispatchEvent(new Event('blackhole-start'));
+    window.dispatchEvent(new Event('blackhole-hover-start'));
     
     // Entrée initiale pour l'anim
-    setHistory(prev => [...prev, { command: './blackhole', output: BLACKHOLE_ANIMATION[0] }]);
+    setHistory(prev => [...prev, { command: './blackhole', output: 'Initiating singularization process...\nCalibrating gravitational core...\nWARNING: Event horizon destabilizing...' }]);
 
-    for (let frameIndex = 1; frameIndex < BLACKHOLE_ANIMATION.length; frameIndex++) {
-      // Trigger explosion bg (Phase 3 ~ frame 45)
-      if (frameIndex === 45) {
-          window.dispatchEvent(new Event('blackhole-explode'));
-      }
+    // Wait 4 seconds for explosion
+    await new Promise(resolve => setTimeout(resolve, 4000));
+    window.dispatchEvent(new Event('blackhole-explode'));
 
-      await new Promise(resolve => setTimeout(resolve, 40));
-      setHistory(prev => {
-        const newHistory = [...prev];
-        newHistory[newHistory.length - 1] = { 
-          command: './blackhole', 
-          output: BLACKHOLE_ANIMATION[frameIndex] 
-        };
-        return newHistory;
-      });
-    }
-
-    // Message transition post-anim pour éviter le freeze
+    // Message post-anim
     setHistory(prev => [...prev, { 
       command: '', 
       output: [
@@ -67,6 +54,7 @@ const TerminalDisplay: React.FC = () => {
     // Micro délai pour le fade
     await new Promise(resolve => setTimeout(resolve, 700));
     
+    window.dispatchEvent(new Event('blackhole-hover-end'));
     // Redirect final
     window.location.href = '/easter-egg';
   };
