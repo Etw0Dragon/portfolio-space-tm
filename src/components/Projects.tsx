@@ -7,12 +7,12 @@ const projects = [
     id: "alcyone",
     title: "AlcyoneOS",
     description: "Système d'exploitation basé sur Linux personnalisé, optimisé pour la performance et la sécurité des infrastructures.",
-    tags: ["Linux", "Kernel", "Security", "Bash"],
+    tags: ["Linux", "Kernel", "Security", "Bash", "Golang"],
     icon: <Cpu className="w-8 h-8 text-cosmic-500" />
   },
   {
     id: "homelab",
-    title: "Infrastructure HomeLab",
+    title: "Infra Personnelle",
     description: "Environnement de virtualisation haute disponibilité sous Proxmox. Segmentation réseau et isolation des services.",
     tags: ["Proxmox", "VLAN", "Docker", "ZFS"],
     icon: <Server className="w-8 h-8 text-cosmic-500" />,
@@ -172,7 +172,8 @@ const Projects: React.FC = () => {
                         "Monitoring (Prometheus/Grafana)",
                         "Vaultwarden (Gestionnaire de mots de passe)",
                         "Nextcloud (Cloud Personnel)",
-                        "Solution de Backup (Proxmox Backup Server)"
+                        "Solution de Backup (Proxmox Backup Server)",
+                        "K3s pour l'orchestration de petits clusters Kubernetes et de mes containers importants",
                       ].map(service => (
                         <li key={service} className="flex items-center gap-2 text-sm text-gray-300">
                           <div className="w-1.5 h-1.5 rounded-full bg-cosmic-500" />

@@ -246,7 +246,14 @@ const createAccretionDiskColor = (uniforms) => Fn(([hitR, hitAngle, time, rayDir
   // Standard thin disk model uses α ≈ 0.75
   const peakTempK = uniforms.diskTemperature.mul(1000.0);
   const tempK = peakTempK.mul(pow(innerR.div(hitR), uniforms.temperatureFalloff));
-  const diskColor = blackbodyColor(tempK).toVar('diskColor');
+  const thermalColor = blackbodyColor(tempK);
+  const hotCore = pow(float(1.0).sub(normR), float(1.6));
+  const themedColor = mix(
+    vec3(0.42, 0.22, 1.0),
+    vec3(1.0, 0.96, 1.0),
+    hotCore
+  );
+  const diskColor = themedColor.mul(mix(float(0.72), float(1.15), thermalColor.r)).toVar('diskColor');
 
   // Doppler beaming: D = 1/(1 - β·cos(θ)), brightness ∝ D³
   const rotationSign = sign(uniforms.diskRotationSpeed);

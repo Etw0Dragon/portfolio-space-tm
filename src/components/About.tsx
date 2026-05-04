@@ -50,7 +50,7 @@ const About: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-3 text-gray-400">
                     <Terminal className="w-5 h-5 text-cosmic-500" />
-                    <span>Amoureux du terminal <strong className="text-white">Linux</strong></span>
+                    <span>Amoureux du<strong className="text-white"> Terminal</strong></span>
                   </div>
                   <div className="flex items-center gap-3 text-gray-400">
                     <Code2 className="w-5 h-5 text-cosmic-500" />
@@ -73,7 +73,7 @@ const About: React.FC = () => {
                  <div className="text-sm text-gray-400">Années d'exp. personnelle</div>
                </div>
                <div className="p-4 bg-cosmic-800 rounded-lg border border-cosmic-700/50">
-                 <div className="text-3xl font-bold text-white mb-1">Un peu trop</div>
+                 <div className="text-3xl font-bold text-white mb-1">Énormément</div>
                  <div className="text-sm text-gray-400">De motivation</div>
                </div>
              </div>

@@ -197,7 +197,7 @@ const Timeline: React.FC = () => {
                 >
                   {/* Asset vidéo trou noir */}
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <div className="pointer-events-none scale-[1.24] md:scale-[1.28]">
+                    <div className="pointer-events-none scale-[1.18] md:scale-[1.22]">
                       <NativeBlackHoleLoader 
                         className="w-[1120px] h-[1120px] md:w-[1560px] md:h-[1560px] max-w-none object-contain pointer-events-none"
                       />
