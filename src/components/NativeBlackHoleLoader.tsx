@@ -44,8 +44,8 @@ const NativeBlackHoleLoader: React.FC<{
     const container = containerRef.current;
     
     // Initial size
-    let currentWidth = container.clientWidth || window.innerWidth;
-    let currentHeight = container.clientHeight || window.innerHeight;
+    let currentWidth = Math.max(1, container.clientWidth || window.innerWidth);
+    let currentHeight = Math.max(1, container.clientHeight || window.innerHeight);
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(60, currentWidth / currentHeight, 0.1, 1000);
@@ -78,19 +78,11 @@ const NativeBlackHoleLoader: React.FC<{
     simulation.onResize(currentWidth, currentHeight);
     simulation.updateCamera(camera);
 
-    const scenePass = pass(scene, camera);
-    const bloomPass = bloom(scenePass, config.bloomStrength, config.bloomRadius, config.bloomThreshold);
-    try {
-        // Fallback or explicit resolution
-        renderer.resolvePostProcessing(scenePass, bloomPass);
-    } catch(e){
-        console.warn("Post processing not resolving correctly:", e);
-    }
-
     const clock = new THREE.Clock();
     let animationFrameId: number;
     let isZumping = false;
     let isExploding = false;
+    let postProcessing: { render: () => void; dispose?: () => void } | null = null;
 
     const onStart = () => { isZumping = true; };
     const onExplode = () => { isExploding = true; };
@@ -108,11 +100,10 @@ const NativeBlackHoleLoader: React.FC<{
 
     const isRunningRef = { current: true };
 
-    async function animate() {
+    function animate() {
       if (!isRunningRef.current) return;
       
       const delta = clock.getDelta();
-      const elapsedTime = clock.getElapsedTime();
 
       // Terminal logic zoom:
       if (isZumping && !isExploding) {
@@ -127,15 +118,18 @@ const NativeBlackHoleLoader: React.FC<{
       camera.lookAt(0, 0, 0);
       simulation.update(delta, camera);
 
-      await renderer.renderAsync(scene, camera);
+      if (postProcessing) {
+        postProcessing.render();
+      } else {
+        renderer.render(scene, camera);
+      }
       animationFrameId = requestAnimationFrame(animate);
     }
-    animate();
 
     const handleResize = () => {
       if (!container) return;
-      const w = container.clientWidth || window.innerWidth;
-      const h = container.clientHeight || window.innerHeight;
+      const w = Math.max(1, container.clientWidth || window.innerWidth);
+      const h = Math.max(1, container.clientHeight || window.innerHeight);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
@@ -143,9 +137,37 @@ const NativeBlackHoleLoader: React.FC<{
     };
     window.addEventListener('resize', handleResize);
 
+    const resizeObserver = new ResizeObserver(handleResize);
+    resizeObserver.observe(container);
+
+    const initializeRenderer = async () => {
+      try {
+        await renderer.init();
+        if (!isRunningRef.current) return;
+
+        const scenePass = pass(scene, camera);
+        const scenePassColor = scenePass.getTextureNode();
+        const bloomPassNode = bloom(scenePassColor);
+        bloomPassNode.threshold.value = config.bloomThreshold;
+        bloomPassNode.strength.value = config.bloomStrength;
+        bloomPassNode.radius.value = config.bloomRadius;
+
+        postProcessing = new (THREE as any).PostProcessing(renderer);
+        postProcessing.outputNode = scenePassColor.add(bloomPassNode);
+
+        handleResize();
+        animate();
+      } catch (error) {
+        console.error('Failed to initialize WebGPU black hole renderer:', error);
+      }
+    };
+
+    initializeRenderer();
+
     return () => {
       isRunningRef.current = false;
       cancelAnimationFrame(animationFrameId);
+      resizeObserver.disconnect();
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('blackhole-start', onStart);
       window.removeEventListener('blackhole-explode', onExplode);
@@ -153,6 +175,7 @@ const NativeBlackHoleLoader: React.FC<{
       if (container) {
         container.removeChild(renderer.domElement);
       }
+      postProcessing?.dispose?.();
       renderer.dispose();
     };
   }, []);
