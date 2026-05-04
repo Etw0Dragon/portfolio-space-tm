@@ -1,9 +1,8 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import * as THREE from 'three/webgpu';
 import { pass } from 'three/tsl';
 import { bloom } from 'three/addons/tsl/display/BloomNode.js';
 import { BlackHoleSimulation } from '../utils/webgpu-black-hole/blackhole.js';
-import { useInView } from 'framer-motion';
 
 const NativeBlackHoleLoader: React.FC<{
     width?: number | string;
@@ -12,14 +11,6 @@ const NativeBlackHoleLoader: React.FC<{
 }> = ({ width = '100%', height = '100%', className = "" }) => {
   const cameraHome = useRef(new THREE.Vector3(0, -5, 20));
   const containerRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(containerRef, { margin: "200px" });
-  
-  const isInViewRef = useRef(isInView);
-  
-  useEffect(() => {
-    isInViewRef.current = isInView;
-  }, [isInView]);
-
   useEffect(() => {
     if (!containerRef.current) return;
 
@@ -136,9 +127,7 @@ const NativeBlackHoleLoader: React.FC<{
       camera.lookAt(0, 0, 0);
       simulation.update(delta, camera);
 
-      if (isInViewRef.current) {
-          await renderer.renderAsync(scene, camera);
-      }
+      await renderer.renderAsync(scene, camera);
       animationFrameId = requestAnimationFrame(animate);
     }
     animate();
