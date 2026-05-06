@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { BLACKHOLE_ANIMATION } from '../utils/blackholeFrames';
 
 interface CommandOutput {
   command: string;
@@ -13,6 +13,7 @@ const TerminalDisplay: React.FC = () => {
   ]);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [blackholeFrame, setBlackholeFrame] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -22,8 +23,25 @@ const TerminalDisplay: React.FC = () => {
     }
   }, [history]);
 
+  useEffect(() => {
+    if (!isAnimating) {
+      setBlackholeFrame(0);
+      return;
+    }
+
+    const intervalId = window.setInterval(() => {
+      setBlackholeFrame(prev => {
+        const nextFrame = prev + 1;
+        return nextFrame >= BLACKHOLE_ANIMATION.length ? prev : nextFrame;
+      });
+    }, 40);
+
+    return () => window.clearInterval(intervalId);
+  }, [isAnimating]);
+
   const runBlackholeAnimation = async () => {
     setIsAnimating(true);
+    setBlackholeFrame(0);
     window.dispatchEvent(new Event('blackhole-start'));
     window.dispatchEvent(new Event('blackhole-hover-start'));
     
@@ -192,13 +210,21 @@ const TerminalDisplay: React.FC = () => {
              <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] -z-10"></div>
              
              <div className={`text-gray-200 font-mono whitespace-pre text-center w-full h-full flex flex-col justify-center overflow-hidden ${
-                Array.isArray(history[history.length - 1].output) && (history[history.length - 1].output as string[]).length < 10
+                blackholeFrame >= BLACKHOLE_ANIMATION.length - 1
                   ? 'text-base sm:text-xl md:text-2xl leading-relaxed'
                   : 'leading-none text-[7px] sm:text-[9px] md:text-[13px] lg:text-[15px] xl:text-[18px]'
              }`}>
-                {Array.isArray(history[history.length - 1].output) ? (
-                    (history[history.length - 1].output as string[]).map((line, j) => <div key={j} className="w-full">{line}</div>)
-                ) : null}
+                {blackholeFrame >= BLACKHOLE_ANIMATION.length - 1 ? (
+                  <>
+                    <div className="w-full">COLLAPSE SUCCESSFUL</div>
+                    <div className="h-4 w-full"></div>
+                    <div className="w-full">[ OK ] Quantum State Stabilized</div>
+                    <div className="w-full">[ OK ] Reality Anchor Released</div>
+                    <div className="w-full">[ INFO ] Redirecting to Secret Sector...</div>
+                  </>
+                ) : (
+                  BLACKHOLE_ANIMATION[blackholeFrame].map((line, j) => <div key={j} className="w-full">{line}</div>)
+                )}
              </div>
         </div>
       )}
