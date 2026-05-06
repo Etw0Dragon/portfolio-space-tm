@@ -1,16 +1,23 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three/webgpu';
-import { pass } from 'three/tsl';
-import { bloom } from 'three/addons/tsl/display/BloomNode.js';
 import { BlackHoleSimulation } from '../utils/webgpu-black-hole/blackhole.js';
+
+const getRenderPixelRatio = (renderScale: number) => {
+  const basePixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+  return Math.max(0.35, basePixelRatio * renderScale);
+};
 
 const NativeBlackHoleLoader: React.FC<{
     width?: number | string;
     height?: number | string;
     className?: string;
-}> = ({ width = '100%', height = '100%', className = "" }) => {
+    renderScale: number;
+}> = ({ width = '100%', height = '100%', className = "", renderScale }) => {
   const cameraHome = useRef(new THREE.Vector3(0, -5, 20));
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasLoadError, setHasLoadError] = useState(false);
+
   useEffect(() => {
     if (!containerRef.current) return;
 
@@ -36,12 +43,11 @@ const NativeBlackHoleLoader: React.FC<{
       "stepSize": 1,
       "starsEnabled": false, 
       "nebulaEnabled": false, 
-      "bloomStrength": 0.68,
-      "bloomRadius": 0.2,
-      "bloomThreshold": 0.40,
     };
 
     const container = containerRef.current;
+    setIsLoading(true);
+    setHasLoadError(false);
     
     // Initial size
     let currentWidth = Math.max(1, container.clientWidth || window.innerWidth);
@@ -55,8 +61,8 @@ const NativeBlackHoleLoader: React.FC<{
     const renderer = new THREE.WebGPURenderer({ antialias: true, alpha: true });
     // Make background transparent so StarField shows through
     renderer.setClearColor(0x000000, 0); 
+    renderer.setPixelRatio(getRenderPixelRatio(renderScale));
     renderer.setSize(currentWidth, currentHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     
     // Add canvas toDOM
@@ -68,8 +74,8 @@ const NativeBlackHoleLoader: React.FC<{
     renderer.domElement.style.height = '100%';
     renderer.domElement.style.zIndex = '-15';
     // Mettre un masque radial pour adoucir les bords COMME LA VIDEO
-    renderer.domElement.style.maskImage = 'radial-gradient(circle, black 36%, transparent 72%)';
-    renderer.domElement.style.WebkitMaskImage = 'radial-gradient(circle, black 36%, transparent 72%)';
+    renderer.domElement.style.maskImage = 'radial-gradient(circle, black 38%, rgba(0,0,0,0.75) 54%, transparent 72%)';
+    renderer.domElement.style.WebkitMaskImage = 'radial-gradient(circle, black 38%, rgba(0,0,0,0.75) 54%, transparent 72%)';
 
     container.appendChild(renderer.domElement);
 
@@ -82,7 +88,6 @@ const NativeBlackHoleLoader: React.FC<{
     let animationFrameId: number;
     let isZumping = false;
     let isExploding = false;
-    let postProcessing: { render: () => void; dispose?: () => void } | null = null;
 
     const onStart = () => { isZumping = true; };
     const onExplode = () => { isExploding = true; };
@@ -118,11 +123,7 @@ const NativeBlackHoleLoader: React.FC<{
       camera.lookAt(0, 0, 0);
       simulation.update(delta, camera);
 
-      if (postProcessing) {
-        postProcessing.render();
-      } else {
-        renderer.render(scene, camera);
-      }
+      renderer.render(scene, camera);
       animationFrameId = requestAnimationFrame(animate);
     }
 
@@ -132,6 +133,7 @@ const NativeBlackHoleLoader: React.FC<{
       const h = Math.max(1, container.clientHeight || window.innerHeight);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
+      renderer.setPixelRatio(getRenderPixelRatio(renderScale));
       renderer.setSize(w, h);
       simulation.onResize(w, h);
     };
@@ -145,20 +147,13 @@ const NativeBlackHoleLoader: React.FC<{
         await renderer.init();
         if (!isRunningRef.current) return;
 
-        const scenePass = pass(scene, camera);
-        const scenePassColor = scenePass.getTextureNode();
-        const bloomPassNode = bloom(scenePassColor);
-        bloomPassNode.threshold.value = config.bloomThreshold;
-        bloomPassNode.strength.value = config.bloomStrength;
-        bloomPassNode.radius.value = config.bloomRadius;
-
-        postProcessing = new (THREE as any).PostProcessing(renderer);
-        postProcessing.outputNode = scenePassColor.add(bloomPassNode);
-
         handleResize();
+        setIsLoading(false);
         animate();
       } catch (error) {
         console.error('Failed to initialize WebGPU black hole renderer:', error);
+        setHasLoadError(true);
+        setIsLoading(false);
       }
     };
 
@@ -175,17 +170,36 @@ const NativeBlackHoleLoader: React.FC<{
       if (container) {
         container.removeChild(renderer.domElement);
       }
-      postProcessing?.dispose?.();
       renderer.dispose();
     };
-  }, []);
+  }, [renderScale]);
 
   return (
     <div 
         ref={containerRef} 
         className={className} 
         style={{ width, height, position: 'relative' }} 
-    />
+    >
+      {(isLoading || hasLoadError) && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+          <div className="rounded-lg border border-cosmic-500/40 bg-cosmic-900/85 px-4 py-3 text-center shadow-[0_0_32px_rgba(127,90,240,0.35)] backdrop-blur-md">
+            {isLoading ? (
+              <>
+                <div className="mx-auto mb-2 h-6 w-6 animate-spin rounded-full border-2 border-cosmic-500 border-t-transparent" />
+                <p className="text-[10px] font-orbitron uppercase tracking-[0.24em] text-cosmic-100">
+                  Chargement shader
+                </p>
+              </>
+            ) : (
+              <p className="max-w-[220px] text-xs leading-relaxed text-gray-300">
+                WebGPU n'a pas pu initialiser le rendu du trou noir.
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
+    </div>
   );
 };
 

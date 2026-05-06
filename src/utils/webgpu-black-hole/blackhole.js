@@ -124,6 +124,8 @@ export class BlackHoleSimulation {
 
     // Create material with our raymarching shader
     const material = new THREE.MeshBasicNodeMaterial();
+    material.transparent = true;
+    material.depthWrite = false;
     material.colorNode = this.createRaymarchingShader();
 
     this.blackHoleMesh = new THREE.Mesh(geometry, material);

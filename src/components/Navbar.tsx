@@ -1,3 +1,4 @@
+import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { SOCIALS } from "../constants";
 
@@ -5,9 +6,9 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <div className="w-full h-[65px] fixed top-0 shadow-lg shadow-[#2A0E61]/50 bg-[#03001427] backdrop-blur-md z-50 px-10">
+    <div className="w-full h-[65px] fixed top-0 shadow-lg shadow-[#2A0E61]/50 bg-[#03001427] backdrop-blur-md z-50 px-4 sm:px-6 md:px-10">
       {/* Container Navbar */}
-      <div className="w-full h-full flex items-center justify-between m-auto px-[10px]">
+      <div className="w-full h-full flex items-center justify-between m-auto px-0 md:px-[10px]">
         {/* Côté gauche (vide) */}
         <div className="flex-1 hidden md:flex">
         </div>
@@ -53,16 +54,17 @@ const Navbar = () => {
 
         {/* Menu burger (Mobile) */}
         <button
-          className="md:hidden text-white focus:outline-none text-4xl"
+          className="md:hidden flex h-11 w-11 items-center justify-center rounded-lg border border-cosmic-700/60 bg-cosmic-900/60 text-white focus:outline-none focus:ring-2 focus:ring-cosmic-500"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          aria-label={isMobileMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
         >
-          ☰
+          {isMobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
       </div>
 
       {/* Menu Mobile */}
       {isMobileMenuOpen && (
-        <div className="absolute top-[65px] left-0 w-full bg-[#030014] p-5 flex flex-col items-center text-gray-300 md:hidden border-b border-[#7042f861]">
+        <div className="absolute top-[65px] left-0 w-full bg-[#030014] p-5 flex flex-col items-center text-gray-300 md:hidden border-b border-[#7042f861] shadow-lg shadow-[#2A0E61]/30">
           {/* Liens */}
           <div className="flex flex-col items-center gap-4 font-orbitron">
             <a

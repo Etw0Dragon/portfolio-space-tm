@@ -33,20 +33,20 @@ const Projects: React.FC = () => {
   const selectedProject = projects.find(p => p.id === selectedId);
 
   return (
-    <section id="projects" className="py-24 pb-32 relative px-4">
+    <section id="projects" className="min-h-[100svh] py-20 md:py-24 relative px-5 sm:px-6 md:px-4 flex items-center">
       <div className="max-w-7xl mx-auto">
         <motion.div
            initial={{ opacity: 0, y: 30 }}
            whileInView={{ opacity: 1, y: 0 }}
            transition={{ duration: 0.8 }}
            viewport={{ once: true }}
-           className="mb-16"
+           className="mb-10 md:mb-16"
         >
           <span className="text-cosmic-500 font-orbitron tracking-widest text-sm block mb-2">02. PROJETS</span>
-          <h2 className="text-4xl md:text-5xl font-display font-bold text-white">Projets Actifs</h2>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-white">Projets Actifs</h2>
         </motion.div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-8">
           {projects.map((project, index) => (
             <motion.div
               key={index}
@@ -60,7 +60,7 @@ const Projects: React.FC = () => {
             >
               <div className="absolute inset-0 bg-gradient-to-br from-cosmic-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
               
-              <div className="p-8 h-full flex flex-col">
+              <div className="p-5 sm:p-6 md:p-8 h-full flex flex-col">
                 <div className="flex justify-between items-start mb-6">
                   <div className="p-3 bg-cosmic-900/50 rounded-lg border border-cosmic-700 group-hover:border-cosmic-500 transition-colors">
                     {project.icon}
@@ -72,7 +72,7 @@ const Projects: React.FC = () => {
                   )}
                 </div>
                 
-                <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-cosmic-500 transition-colors">
+                <h3 className="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-cosmic-500 transition-colors">
                   {project.title}
                 </h3>
                 
@@ -96,7 +96,7 @@ const Projects: React.FC = () => {
       {/* Modal détail Homelab */}
       <AnimatePresence>
         {selectedId === 'homelab' && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 md:p-8">
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -110,27 +110,27 @@ const Projects: React.FC = () => {
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="relative w-full max-w-4xl bg-cosmic-800 border border-cosmic-700 rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
+              className="relative w-full max-w-4xl bg-cosmic-800 border border-cosmic-700 rounded-xl shadow-2xl overflow-hidden max-h-[92svh] overflow-y-auto"
             >
-              <div className="p-6 md:p-10">
+              <div className="p-5 sm:p-6 md:p-10">
                 <button 
                   onClick={() => setSelectedId(null)}
-                  className="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors"
+                  className="absolute top-5 right-5 md:top-6 md:right-6 text-gray-400 hover:text-white transition-colors"
                 >
                   <X size={24} />
                 </button>
 
-                <div className="flex items-center gap-4 mb-8">
-                  <div className="p-4 bg-cosmic-500/20 rounded-xl border border-cosmic-500/50">
-                    <Server className="w-8 h-8 text-cosmic-500" />
+                <div className="flex items-start gap-3 sm:gap-4 mb-7 md:mb-8 pr-10">
+                  <div className="p-3 md:p-4 bg-cosmic-500/20 rounded-lg border border-cosmic-500/50 shrink-0">
+                    <Server className="w-7 h-7 md:w-8 md:h-8 text-cosmic-500" />
                   </div>
                   <div>
-                    <h2 className="text-3xl font-bold text-white font-display">Architecture HomeLab</h2>
+                    <h2 className="text-2xl md:text-3xl font-bold text-white font-display">Architecture HomeLab</h2>
                     <p className="text-cosmic-500 font-orbitron text-sm">PLAN RÉSEAU & INFRASTRUCTURE</p>
                   </div>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-8 mb-8">
+                <div className="grid md:grid-cols-2 gap-6 md:gap-8 mb-8">
                   <div className="space-y-6">
                     <div>
                       <h4 className="flex items-center gap-2 text-white font-bold mb-3">
@@ -160,7 +160,7 @@ const Projects: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="bg-cosmic-900/50 rounded-xl p-6 border border-cosmic-700/50 relative overflow-hidden">
+                  <div className="bg-cosmic-900/50 rounded-xl p-5 md:p-6 border border-cosmic-700/50 relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-4 opacity-10">
                         <HardDrive size={120} />
                     </div>
@@ -175,8 +175,8 @@ const Projects: React.FC = () => {
                         "Solution de Backup (Proxmox Backup Server)",
                         "K3s pour l'orchestration de petits clusters Kubernetes et de mes containers importants",
                       ].map(service => (
-                        <li key={service} className="flex items-center gap-2 text-sm text-gray-300">
-                          <div className="w-1.5 h-1.5 rounded-full bg-cosmic-500" />
+                        <li key={service} className="flex items-start gap-2 text-sm text-gray-300">
+                          <div className="mt-2 w-1.5 h-1.5 shrink-0 rounded-full bg-cosmic-500" />
                           {service}
                         </li>
                       ))}
@@ -187,7 +187,7 @@ const Projects: React.FC = () => {
                 <div className="pt-6 border-t border-cosmic-700 flex justify-end">
                   <button 
                     onClick={() => setSelectedId(null)}
-                    className="px-6 py-2 bg-cosmic-500 hover:bg-cosmic-600 text-white rounded-lg transition-colors font-medium"
+                    className="w-full sm:w-auto px-6 py-2 bg-cosmic-500 hover:bg-cosmic-600 text-white rounded-lg transition-colors font-medium"
                   >
                     Fermer le plan
                   </button>

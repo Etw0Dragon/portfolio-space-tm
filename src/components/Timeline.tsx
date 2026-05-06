@@ -1,7 +1,7 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import type { MotionValue } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import NativeBlackHoleLoader from './NativeBlackHoleLoader';
+import RenderResolutionPrompt from './RenderResolutionPrompt';
 
 const timelineData = [
   {
@@ -41,29 +41,25 @@ const planets = [
   { name: "Go", logo: "/img/go.png", color: "#00add8", depth: 1.0 },
 ];
 
+const blackHoleScenePosition = {
+  left: '50%',
+  top: '54%',
+  transform: 'translate(-50%, -50%)',
+};
+
 interface TimelineItemProps {
   item: typeof timelineData[0];
   index: number;
-  scrollYProgress: MotionValue<number>;
 }
 
-const TimelineItem: React.FC<TimelineItemProps> = ({ item, index, scrollYProgress }) => {
-  const x = useTransform(
-    scrollYProgress,
-    [0.35, 0.55],
-    [0, index % 2 === 0 ? 300 : -300] // Down de 1200 pour opti perf & feel
-  );
-  
-  const opacity = useTransform(
-    scrollYProgress,
-    [0, 0.05, 0.5, 0.6],
-    [1, 1, 1, 0]
-  );
-
+const TimelineItem: React.FC<TimelineItemProps> = ({ item, index }) => {
   return (
     <motion.div
-      style={{ x, opacity }}
-      className={`flex flex-col md:flex-row gap-8 ${index % 2 === 0 ? 'md:flex-row-reverse' : ''}`}
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.55, delay: index * 0.08 }}
+      viewport={{ once: true, amount: 0.35 }}
+      className={`flex flex-row md:flex-row gap-4 md:gap-8 ${index % 2 === 0 ? 'md:flex-row-reverse' : ''}`}
     >
       <div className="flex-1 hidden md:block"></div>
       
@@ -72,12 +68,12 @@ const TimelineItem: React.FC<TimelineItemProps> = ({ item, index, scrollYProgres
         <div className="absolute w-8 h-8 rounded-full border border-cosmic-500 opacity-50"></div>
       </div>
 
-      <div className="flex-1 pb-8 md:pb-0">
-        <div className={`bg-cosmic-800/40 p-6 rounded-xl border border-cosmic-700/50 backdrop-blur-sm hover:border-cosmic-500 transition-colors duration-300 ${index % 2 === 0 ? 'text-left' : 'md:text-right text-left'}`}>
-          <span className="font-orbitron text-cosmic-500 text-sm font-bold">{item.year}</span>
-          <h3 className="text-xl font-bold text-white mt-1 mb-2">{item.title}</h3>
-          <h4 className="text-gray-400 text-sm mb-4 italic">{item.location}</h4>
-          <p className="text-gray-300 leading-relaxed text-sm">
+      <div className="flex-1 min-w-0 pb-4 md:pb-0">
+        <div className={`bg-cosmic-800/40 p-3 sm:p-4 md:p-6 rounded-xl border border-cosmic-700/50 backdrop-blur-sm hover:border-cosmic-500 transition-colors duration-300 ${index % 2 === 0 ? 'text-left' : 'md:text-right text-left'}`}>
+          <span className="font-orbitron text-cosmic-500 text-xs sm:text-sm font-bold">{item.year}</span>
+          <h3 className="text-lg sm:text-xl font-bold text-white mt-1 mb-1 md:mb-2">{item.title}</h3>
+          <h4 className="text-gray-400 text-xs sm:text-sm mb-2 md:mb-4 italic">{item.location}</h4>
+          <p className="text-gray-300 leading-relaxed text-xs sm:text-sm">
             {item.description}
           </p>
         </div>
@@ -86,16 +82,11 @@ const TimelineItem: React.FC<TimelineItemProps> = ({ item, index, scrollYProgres
   );
 };
 
-const Timeline: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
+const BlackHoleExperience: React.FC = () => {
   const [isHovering, setIsHovering] = useState(false);
   const [isSucking, setIsSucking] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start 0.8", "end end"]
-  });
+  const [renderScale, setRenderScale] = useState<number | null>(null);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -104,21 +95,7 @@ const Timeline: React.FC = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const titleOpacity = useTransform(scrollYProgress, [0, 0.3, 0.4], [1, 1, 0]);
-  const lineOpacity = useTransform(scrollYProgress, [0, 0.4, 0.5], [1, 1, 0]);
-  const planetsOpacity = useTransform(scrollYProgress, [0.45, 0.65, 0.9, 1], [0, 1, 1, 0]);
-  const planetsScale = useTransform(scrollYProgress, [0.45, 0.75], [0.8, 1]);
-  
-  // State pointer events pour la fiabilité
-  const [isInteractive, setIsInteractive] = useState(false);
-  const [isTimelineActive, setIsTimelineActive] = useState(true);
-
-  useEffect(() => {
-    return scrollYProgress.on("change", (v: number) => {
-      setIsInteractive(v > 0.4);
-      setIsTimelineActive(v < 0.55);
-    });
-  }, [scrollYProgress]);
+  const hasRenderScale = renderScale !== null;
 
   const handleBlackHoleClick = async () => {
     if (isSucking) return;
@@ -137,117 +114,118 @@ const Timeline: React.FC = () => {
   };
 
   return (
-    <section ref={containerRef} id="timeline" className="h-[300vh] relative bg-transparent">
-      <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center">
-        <motion.div 
-          className={`max-w-4xl w-full px-4 relative z-20 pt-32 md:pt-40 ${isTimelineActive ? 'pointer-events-auto' : 'pointer-events-none'}`}
-        >
-          <div className="text-center mb-12 md:mb-16">
-             <motion.div style={{ opacity: titleOpacity }}>
-               <span className="text-cosmic-500 font-orbitron tracking-widest text-sm block mb-2">03. PARCOURS</span>
-               <h2 className="text-4xl font-display font-bold text-white">Trajectoire Spatiale</h2>
-             </motion.div>
-          </div>
-
-          <div className="relative">
-            {/* Ligne mid */}
-            <motion.div 
-              style={{ opacity: lineOpacity }}
-              className="absolute left-0 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-cosmic-500 via-cosmic-900 to-transparent md:-translate-x-1/2"
-            ></motion.div>
-            
-            <div className="space-y-6 md:space-y-8">
-              {timelineData.map((item, index) => (
-                <TimelineItem 
-                  key={index} 
-                  item={item} 
-                  index={index} 
-                  scrollYProgress={scrollYProgress} 
-                />
-              ))}
+    <section id="blackhole" className="relative min-h-[100svh] overflow-hidden px-5 py-20 sm:px-6 md:px-4 md:py-24">
+      <div className="mx-auto flex min-h-[calc(100svh-10rem)] w-full max-w-7xl items-center justify-center">
+        {!hasRenderScale ? (
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true, amount: 0.4 }}
+            className="w-full max-w-xl"
+          >
+            <div className="mb-6 text-center">
+              <span className="text-cosmic-500 font-orbitron tracking-widest text-sm block mb-2">04. SINGULARITÉ</span>
             </div>
-          </div>
-        </motion.div>
+            <RenderResolutionPrompt placement="inline" onSelect={setRenderScale} />
+          </motion.div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.7 }}
+            className="relative h-[calc(100svh-10rem)] min-h-[560px] w-full overflow-hidden"
+          >
+            <div className="pointer-events-none absolute inset-x-0 top-0 z-20 text-center">
+              <span className="text-cosmic-500 font-orbitron tracking-widest text-sm block mb-2">04. SINGULARITÉ</span>
+            </div>
 
-        {/* Reveal plantete */}
-        <motion.div 
-          style={{ 
-              opacity: planetsOpacity,
-              scale: planetsScale,
-          }}
-          className={`absolute inset-0 flex items-center justify-center z-[100] ${isInteractive ? 'pointer-events-auto' : 'pointer-events-none'}`}
-        >
-          <div className="relative w-full h-full flex items-center justify-center">
-              {/* Trou noir mid (phase planètes) */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0">
-                <motion.button
-                  onClick={handleBlackHoleClick}
-                  onMouseEnter={() => toggleHover(true)}
-                  onMouseLeave={() => toggleHover(false)}
-                  animate={{ 
-                    scale: isHovering ? 1.1 : 1,
-                  }}
-                  transition={{ 
-                    type: "spring", 
-                    stiffness: 200, 
-                    damping: 25,
-                    opacity: { duration: 0.2 }
-                  }}
-                  className="relative w-40 h-40 md:w-64 md:h-64 cursor-pointer flex items-center justify-center group z-0"
-                >
-                  {/* Asset vidéo trou noir */}
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <div className="pointer-events-none scale-[1.18] md:scale-[1.22]">
-                      <NativeBlackHoleLoader 
-                        className="w-[1120px] h-[1120px] md:w-[1560px] md:h-[1560px] max-w-none object-contain pointer-events-none"
-                      />
-                    </div>
-                    </div>
-
-                    {/* Glow d'intégration up */}
-                    <motion.div
-                    className="absolute inset-[-65%] rounded-full pointer-events-none z-[-1]"
-                    style={{ 
-                      background: 'radial-gradient(circle, rgba(127, 90, 240, 0.34) 0%, rgba(49, 120, 198, 0.12) 36%, transparent 72%)',
-                      filter: 'blur(46px)'
+            <div className="pointer-events-none absolute inset-0 z-[100] flex items-center justify-center overflow-hidden">
+              <div className="relative w-full h-full overflow-hidden">
+                {/* Trou noir mid (phase planètes) */}
+              <div
+                className="absolute z-0 h-0 w-0"
+                style={blackHoleScenePosition}
+              >
+                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                  <motion.div
+                    onClick={hasRenderScale ? handleBlackHoleClick : undefined}
+                    onMouseEnter={() => hasRenderScale && toggleHover(true)}
+                    onMouseLeave={() => hasRenderScale && toggleHover(false)}
+                    role={hasRenderScale ? 'button' : undefined}
+                    tabIndex={hasRenderScale ? 0 : undefined}
+                    onKeyDown={(event) => {
+                      if (!hasRenderScale) return;
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        handleBlackHoleClick();
+                      }
                     }}
                     animate={{ 
-                      scale: isHovering ? 1.2 : 1,
-                      opacity: isHovering ? 0.8 : 0.4,
+                      scale: hasRenderScale && isHovering ? 1.08 : 1,
                     }}
-                  />
+                    transition={{ 
+                      type: "spring", 
+                      stiffness: 200, 
+                      damping: 25,
+                      opacity: { duration: 0.2 }
+                    }}
+                    className={`relative z-0 flex items-center justify-center group ${hasRenderScale ? 'h-32 w-32 cursor-pointer pointer-events-auto sm:h-40 sm:w-40 md:h-64 md:w-64' : 'min-h-[360px] w-[min(92vw,620px)] cursor-default md:min-h-[440px]'}`}
+                  >
+                    {/* Asset vidéo trou noir */}
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <div className="pointer-events-none scale-[1.02] sm:scale-[1.04] md:scale-[1.06]">
+                        <NativeBlackHoleLoader 
+                          renderScale={renderScale}
+                          className="w-[560px] h-[560px] sm:w-[760px] sm:h-[760px] md:w-[1280px] md:h-[1280px] max-w-none object-contain pointer-events-none"
+                        />
+                      </div>
+                    </div>
 
-                  <AnimatePresence>
-                    {isSucking && (
-                      <motion.div
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: 40, opacity: 1 }}
-                        transition={{ duration: 2, ease: "easeIn" }}
-                        className="absolute inset-0 bg-black rounded-full z-50 pointer-events-none"
-                      />
-                    )}
-                  </AnimatePresence>
-                </motion.button>
-              </div>
+                      {/* Glow d'intégration up */}
+                    <motion.div
+                      className="absolute inset-[-65%] rounded-full pointer-events-none z-[-1]"
+                      style={{ 
+                        background: 'radial-gradient(circle, rgba(127, 90, 240, 0.28) 0%, rgba(49, 120, 198, 0.10) 36%, transparent 74%)',
+                        filter: 'blur(46px)'
+                      }}
+                      animate={{ 
+                        scale: isHovering ? 1.18 : 1,
+                        opacity: isHovering ? 0.7 : 0.36,
+                      }}
+                    />
 
-              <motion.div
-                className="pointer-events-none absolute left-1/2 top-1/2 z-[1] h-[190px] w-[350px] -translate-x-1/2 -translate-y-1/2 rotate-[-8deg] rounded-full border border-cosmic-500/20 shadow-[0_0_24px_rgba(127,90,240,0.18)] md:h-[330px] md:w-[620px]"
-                animate={{
-                  opacity: isSucking ? 0 : isHovering ? 0.16 : 0.36,
-                  scale: isHovering ? 0.72 : 1,
-                }}
-                transition={{ duration: isHovering ? 1.2 : 0.8, ease: "easeOut" }}
-              />
-              <motion.div
-                className="pointer-events-none absolute left-1/2 top-1/2 z-[1] h-[120px] w-[260px] -translate-x-1/2 -translate-y-1/2 rotate-[9deg] rounded-full border border-blue-300/10 md:h-[220px] md:w-[460px]"
-                animate={{
-                  opacity: isSucking ? 0 : isHovering ? 0.1 : 0.28,
-                  scale: isHovering ? 0.58 : 1,
-                }}
-                transition={{ duration: isHovering ? 1.2 : 0.8, ease: "easeOut" }}
-              />
+                    <AnimatePresence>
+                      {isSucking && (
+                        <motion.div
+                          initial={{ scale: 0, opacity: 0 }}
+                          animate={{ scale: 40, opacity: 1 }}
+                          transition={{ duration: 2, ease: "easeIn" }}
+                          className="absolute inset-0 bg-black rounded-full z-50 pointer-events-none"
+                        />
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                </div>
 
-              {planets.map((planet, i) => {
+                <motion.div
+                  className="pointer-events-none absolute left-1/2 top-1/2 z-[1] h-[160px] w-[280px] -translate-x-1/2 -translate-y-1/2 rotate-[-8deg] rounded-full border border-cosmic-500/20 shadow-[0_0_24px_rgba(127,90,240,0.18)] sm:h-[190px] sm:w-[350px] md:h-[330px] md:w-[620px]"
+                  animate={{
+                    opacity: isSucking ? 0 : isHovering ? 0.16 : 0.36,
+                    scale: isHovering ? 0.72 : 1,
+                  }}
+                  transition={{ duration: isHovering ? 1.2 : 0.8, ease: "easeOut" }}
+                />
+                <motion.div
+                  className="pointer-events-none absolute left-1/2 top-1/2 z-[1] h-[98px] w-[210px] -translate-x-1/2 -translate-y-1/2 rotate-[9deg] rounded-full border border-blue-300/10 sm:h-[120px] sm:w-[260px] md:h-[220px] md:w-[460px]"
+                  animate={{
+                    opacity: isSucking ? 0 : isHovering ? 0.1 : 0.28,
+                    scale: isHovering ? 0.58 : 1,
+                  }}
+                  transition={{ duration: isHovering ? 1.2 : 0.8, ease: "easeOut" }}
+                />
+
+                {planets.map((planet, i) => {
                   const angle = (i / planets.length) * Math.PI * 2 - Math.PI / 2;
                   
                   return (
@@ -255,8 +233,8 @@ const Timeline: React.FC = () => {
                          key={planet.name}
                          planet={planet}
                          angle={angle}
-                         baseRadiusX={176}
-                         baseRadiusY={122}
+                         baseRadiusX={128}
+                         baseRadiusY={92}
                          mdRadiusX={312}
                          mdRadiusY={196}
                          isHovering={isHovering}
@@ -264,11 +242,51 @@ const Timeline: React.FC = () => {
                          isMobile={isMobile}
                       />
                   );
-              })}
-          </div>
-        </motion.div>
+                })}
+              </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
       </div>
     </section>
+  );
+};
+
+const Timeline: React.FC = () => {
+  return (
+    <>
+      <section id="timeline" className="relative min-h-[100svh] bg-transparent px-5 py-20 sm:px-6 md:px-4 md:py-24 flex items-center justify-center">
+        <div className="max-w-4xl w-full mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true, amount: 0.35 }}
+            className="text-center mb-8 md:mb-14"
+          >
+            <span className="text-cosmic-500 font-orbitron tracking-widest text-sm block mb-2">03. PARCOURS</span>
+            <h2 className="text-3xl sm:text-4xl font-display font-bold text-white">Trajectoire Spatiale</h2>
+          </motion.div>
+
+          <div className="relative">
+            <div className="absolute left-0 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-cosmic-500 via-cosmic-900 to-transparent md:-translate-x-1/2" />
+            
+            <div className="space-y-4 md:space-y-8">
+              {timelineData.map((item, index) => (
+                <TimelineItem 
+                  key={index} 
+                  item={item} 
+                  index={index} 
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <BlackHoleExperience />
+    </>
   );
 };
 

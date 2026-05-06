@@ -415,8 +415,15 @@ export function createBlackHoleShader(uniforms) {
       color.addAssign(bgColor.mul(float(1.0).sub(alpha)));
     });
 
-    // Gamma correction
-    const finalColor = pow(color, vec3(1.0 / 2.2));
-    return vec4(finalColor, 1.0);
+    const shadowDistance = length(vec2(screenPos.x, screenPos.y.mul(1.12)));
+    const shadowAlpha = captured.mul(float(1.0).sub(smoothstep(float(0.34), float(0.48), shadowDistance)));
+
+    // The accretion disk is emissive. Drive its alpha from emitted light, not
+    // from geometric disk coverage, so low-light ray hits do not tint the page.
+    const emittedColor = pow(color, vec3(1.0 / 2.2));
+    const emissionAlpha = clamp(emittedColor.r.max(emittedColor.g).max(emittedColor.b).mul(1.25), float(0.0), float(1.0));
+    const surfaceAlpha = clamp(emissionAlpha.add(shadowAlpha), float(0.0), float(1.0));
+    const finalColor = emittedColor.div(surfaceAlpha.max(0.001));
+    return vec4(finalColor, surfaceAlpha);
   })();
 }
