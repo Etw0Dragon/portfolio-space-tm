@@ -315,25 +315,27 @@ const PlanetComponent: React.FC<{ planet: any, angle: number, baseRadiusX: numbe
                 duration: isHovering ? 1.5 : 1.2, 
                 ease: isHovering ? "anticipate" : "easeOut" 
             }}
-            className="absolute flex flex-col items-center group pointer-events-none z-10"
+            className="absolute left-0 top-0 z-10 h-0 w-0 pointer-events-none"
         >
-            {/* Anneaux planétaires - complexité down */}
-            <div className="absolute w-20 h-20 md:w-32 md:h-32 pointer-events-none">
-                <div 
-                    className="absolute inset-0 rounded-full border border-cosmic-500/20 shadow-[0_0_10px_rgba(127,90,240,0.1)]"
-                    style={{ transform: `rotateX(75deg) rotateY(10deg) rotateZ(${angle}rad)` }}
-                />
-            </div>
+            <div className="absolute left-0 top-0 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center group">
+                {/* Anneaux planétaires - complexité down */}
+                <div className="absolute left-1/2 top-1/2 w-20 h-20 -translate-x-1/2 -translate-y-1/2 md:w-32 md:h-32 pointer-events-none">
+                    <div 
+                        className="absolute inset-0 rounded-full border border-cosmic-500/20 shadow-[0_0_10px_rgba(127,90,240,0.1)]"
+                        style={{ transform: `rotateX(75deg) rotateY(10deg) rotateZ(${angle}rad)` }}
+                    />
+                </div>
 
-            <motion.div 
-                className="w-12 h-12 md:w-20 md:h-20 rounded-full bg-cosmic-800/90 border backdrop-blur-md flex items-center justify-center p-3 md:p-4 shadow-[0_0_20px_rgba(127,90,240,0.3)] group-hover:shadow-[0_0_30px_rgba(127,90,240,0.6)] transition-all duration-300 z-10 pointer-events-auto"
-                style={{ borderColor: `${planet.color}99`, boxShadow: `0 0 22px ${planet.color}40` }}
-            >
-                <img src={planet.logo} alt={planet.name} className="w-full h-full object-contain" />
-            </motion.div>
-            <span className="mt-2 text-[10px] md:text-xs font-orbitron text-cosmic-100 opacity-0 group-hover:opacity-100 transition-opacity bg-cosmic-900/90 px-2 py-1 rounded border border-cosmic-700 whitespace-nowrap">
-                {planet.name}
-            </span>
+                <motion.div 
+                    className="w-12 h-12 md:w-20 md:h-20 rounded-full bg-cosmic-800/90 border backdrop-blur-md flex items-center justify-center p-3 md:p-4 shadow-[0_0_20px_rgba(127,90,240,0.3)] group-hover:shadow-[0_0_30px_rgba(127,90,240,0.6)] transition-all duration-300 z-10 pointer-events-auto"
+                    style={{ borderColor: `${planet.color}99`, boxShadow: `0 0 22px ${planet.color}40` }}
+                >
+                    <img src={planet.logo} alt={planet.name} className="w-full h-full object-contain" />
+                </motion.div>
+                <span className="absolute top-full mt-2 text-[10px] md:text-xs font-orbitron text-cosmic-100 opacity-0 group-hover:opacity-100 transition-opacity bg-cosmic-900/90 px-2 py-1 rounded border border-cosmic-700 whitespace-nowrap">
+                    {planet.name}
+                </span>
+            </div>
         </motion.div>
     );
 };
