@@ -115,6 +115,19 @@ const BlackHoleExperience: React.FC = () => {
 
   return (
     <section id="blackhole" className="relative min-h-[100svh] overflow-hidden px-5 py-20 sm:px-6 md:px-4 md:py-24">
+      <AnimatePresence>
+        {isSucking && (
+          <motion.div className="pointer-events-none fixed inset-0 z-[120] overflow-hidden">
+            <motion.div
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 2, ease: "easeIn" }}
+              className="absolute left-1/2 top-1/2 aspect-square w-[160vmax] -translate-x-1/2 -translate-y-1/2 rounded-full bg-black"
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="mx-auto flex min-h-[calc(100svh-10rem)] w-full max-w-7xl items-center justify-center">
         {!hasRenderScale ? (
           <motion.div
@@ -195,16 +208,6 @@ const BlackHoleExperience: React.FC = () => {
                       }}
                     />
 
-                    <AnimatePresence>
-                      {isSucking && (
-                        <motion.div
-                          initial={{ scale: 0, opacity: 0 }}
-                          animate={{ scale: 40, opacity: 1 }}
-                          transition={{ duration: 2, ease: "easeIn" }}
-                          className="absolute inset-0 bg-black rounded-full z-50 pointer-events-none"
-                        />
-                      )}
-                    </AnimatePresence>
                   </motion.div>
                 </div>
 
