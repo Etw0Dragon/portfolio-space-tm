@@ -147,14 +147,14 @@ const BlackHoleExperience: React.FC = () => {
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.7 }}
-            className="relative h-[calc(100svh-10rem)] min-h-[560px] w-full overflow-hidden"
+            className="relative h-[calc(100svh-10rem)] min-h-[560px] w-full overflow-visible"
           >
             <div className="pointer-events-none absolute inset-x-0 top-0 z-20 text-center">
               <span className="text-cosmic-500 font-orbitron tracking-widest text-sm block mb-2">04. SINGULARITÉ</span>
             </div>
 
-            <div className="pointer-events-none absolute inset-0 z-[100] flex items-center justify-center overflow-hidden">
-              <div className="relative w-full h-full overflow-hidden">
+            <div className="pointer-events-none absolute inset-0 z-[100] flex items-center justify-center overflow-visible">
+              <div className="relative w-full h-full overflow-visible">
                 {/* Trou noir mid (phase planètes) */}
               <div
                 className="absolute z-0 h-0 w-0"
@@ -187,7 +187,9 @@ const BlackHoleExperience: React.FC = () => {
                   >
                     {/* Asset vidéo trou noir */}
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                      <div className="pointer-events-none scale-[1.02] sm:scale-[1.04] md:scale-[1.06]">
+                      <div className={`pointer-events-none transition-transform duration-700 ${
+                        isSucking ? 'scale-[1.6]' : 'scale-[1.02] sm:scale-[1.04] md:scale-[1.06]'
+                      }`}>
                         <NativeBlackHoleLoader 
                           renderScale={renderScale}
                           className="w-[560px] h-[560px] sm:w-[760px] sm:h-[760px] md:w-[1280px] md:h-[1280px] max-w-none object-contain pointer-events-none"

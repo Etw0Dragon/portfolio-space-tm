@@ -12,7 +12,7 @@ const NativeBlackHoleLoader: React.FC<{
     height?: number | string;
     className?: string;
     renderScale: number;
-}> = ({ width = '100%', height = '100%', className = "", renderScale }) => {
+}> = ({ width, height, className = "", renderScale }) => {
   const cameraHome = useRef(new THREE.Vector3(0, -5, 20));
   const containerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
